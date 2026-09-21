@@ -56,6 +56,7 @@ def parse_args():
     parser.add_argument("--val-split", type=float, default=0.2, help="Validation set split ratio (0.0 - 1.0)")
     parser.add_argument("--learning-rate", type=float, default=1e-4, help="Learning rate for Adam optimizer")
     parser.add_argument("--weights", type=str, default="imagenet", help="Pretrained weights ('imagenet' or 'none')")
+    parser.add_argument("--fine-tune", action="store_true", help="Unfreeze top layers for end-to-end fine-tuning")
     return parser.parse_args()
 
 def train():
@@ -168,18 +169,67 @@ def train():
 
     model.summary(print_fn=logger.info)
 
-    # Train
-    logger.info(f"Starting training for {args.epochs} epochs...")
+    # Add Training Callbacks for Best Convergence on Real Images
+    callbacks = [
+        tf.keras.callbacks.EarlyStopping(
+            monitor="val_loss",
+            patience=6,
+            restore_best_weights=True,
+            verbose=1
+        ),
+        tf.keras.callbacks.ReduceLROnPlateau(
+            monitor="val_loss",
+            factor=0.5,
+            patience=3,
+            min_lr=1e-6,
+            verbose=1
+        ),
+        tf.keras.callbacks.ModelCheckpoint(
+            filepath=str(output_model_path),
+            monitor="val_loss",
+            save_best_only=True,
+            verbose=1
+        )
+    ]
+
+    # Train Head
+    logger.info(f"Starting initial training for {args.epochs} epochs...")
     history = model.fit(
         train_ds,
         validation_data=val_ds,
         epochs=args.epochs,
+        callbacks=callbacks,
         verbose=1
     )
 
-    # Save model and class list
-    logger.info(f"Saving trained model to {output_model_path}...")
-    model.save(str(output_model_path))
+    # Optional Fine-Tuning Stage (unfreeze top layers for higher accuracy on real images)
+    if args.fine_tune and args.epochs >= 4:
+        logger.info("Starting fine-tuning: unfreezing top layers of MobileNetV2...")
+        base_model.trainable = True
+        # Freeze all layers except the last 30 layers
+        for layer in base_model.layers[:-30]:
+            layer.trainable = False
+
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=args.learning_rate * 0.1),
+            loss="categorical_crossentropy",
+            metrics=["accuracy"]
+        )
+
+        fine_tune_epochs = max(3, args.epochs // 2)
+        logger.info(f"Fine-tuning for an additional {fine_tune_epochs} epochs...")
+        model.fit(
+            train_ds,
+            validation_data=val_ds,
+            epochs=fine_tune_epochs,
+            callbacks=callbacks,
+            verbose=1
+        )
+
+    # Save final model artifact if not already saved by checkpoint
+    if not output_model_path.exists():
+        logger.info(f"Saving trained model to {output_model_path}...")
+        model.save(str(output_model_path))
 
     logger.info(f"Saving class names to {output_classes_path}...")
     with open(output_classes_path, "w", encoding="utf-8") as f:
