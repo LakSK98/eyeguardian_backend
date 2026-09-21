@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Database
+*.db
+*.sqlite3
+
+# Uploaded screening data (contain individual patient screening captures)
+data/screenings/*
+!data/screenings/.gitkeep
+
+# Trained Model Weights
+models/*.keras
+models/*.h5
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment local secrets
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
