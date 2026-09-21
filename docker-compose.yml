@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  eyeguardian:
+    build: .
+    container_name: eyeguardian-app
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist SQLite database and uploaded screening photos on host machine
+      - ./eyeguardian.db:/app/eyeguardian.db
+      - ./data/screenings:/app/data/screenings
+    restart: unless-stopped
