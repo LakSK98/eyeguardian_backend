@@ -169,18 +169,23 @@ def train():
 
     model.summary(print_fn=logger.info)
 
+    # Save class names mapping immediately
+    logger.info(f"Saving class names to {output_classes_path}...")
+    with open(output_classes_path, "w", encoding="utf-8") as f:
+        json.dump(classes, f, indent=2)
+
     # Add Training Callbacks for Best Convergence on Real Images
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
             monitor="val_loss",
-            patience=6,
+            patience=5,
             restore_best_weights=True,
             verbose=1
         ),
         tf.keras.callbacks.ReduceLROnPlateau(
             monitor="val_loss",
             factor=0.5,
-            patience=3,
+            patience=2,
             min_lr=1e-6,
             verbose=1
         ),
@@ -193,7 +198,7 @@ def train():
     ]
 
     # Train Head
-    logger.info(f"Starting initial training for {args.epochs} epochs...")
+    logger.info(f"Starting transfer learning training for {args.epochs} epochs...")
     history = model.fit(
         train_ds,
         validation_data=val_ds,
@@ -216,7 +221,7 @@ def train():
             metrics=["accuracy"]
         )
 
-        fine_tune_epochs = max(3, args.epochs // 2)
+        fine_tune_epochs = max(2, args.epochs // 2)
         logger.info(f"Fine-tuning for an additional {fine_tune_epochs} epochs...")
         model.fit(
             train_ds,
@@ -226,16 +231,11 @@ def train():
             verbose=1
         )
 
-    # Save final model artifact if not already saved by checkpoint
-    if not output_model_path.exists():
-        logger.info(f"Saving trained model to {output_model_path}...")
-        model.save(str(output_model_path))
+    # Save final best-restored model artifact
+    logger.info(f"Saving final trained model to {output_model_path}...")
+    model.save(str(output_model_path))
 
-    logger.info(f"Saving class names to {output_classes_path}...")
-    with open(output_classes_path, "w", encoding="utf-8") as f:
-        json.dump(classes, f, indent=2)
-
-    logger.info("Training complete! Model artifact and class mapping saved.")
+    logger.info(f"Training complete! Model artifact and {len(classes)} classes saved.")
 
 if __name__ == "__main__":
     train()

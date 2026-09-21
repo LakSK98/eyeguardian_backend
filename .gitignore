@@ -18,8 +18,8 @@ data/screenings/*
 !data/screenings/.gitkeep
 
 # Trained Model Weights
-models/*.keras
-models/*.h5
+# models/*.keras
+# models/*.h5
 
 # Testing & Cache
 .pytest_cache/

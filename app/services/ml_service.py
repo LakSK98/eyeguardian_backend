@@ -155,6 +155,18 @@ class ExternalEyeMLService:
         confidence = float(probabilities[predicted_idx])
         predicted_class = self.class_names[predicted_idx] if predicted_idx < len(self.class_names) else "unknown"
 
+        # Detailed non-diagnostic findings per class
+        class_descriptions = {
+            "Cataract": "Possible lens opacity or pupil clouding indicator detected.",
+            "Conjunctivitis": "Possible conjunctival irritation, hyperemia, or surface injection detected.",
+            "Eyelid": "Possible eyelid margin or periorbital structural irregularity detected.",
+            "Uveitis": "Possible anterior segment or ciliary vascular prominence indicator detected.",
+            "redness": "Elevated vascular prominence or erythema detected in the scleral/conjunctival region.",
+            "ptosis": "Possible upper eyelid position or palpebral fissure asymmetry indicator detected.",
+            "leukocoria": "Possible pupillary reflection or abnormal whitish reflex indicator detected.",
+            "other_abnormal": "Atypical external eye appearance indicator detected."
+        }
+
         # Determine preliminary risk level and non-diagnostic findings
         # Non-diagnostic language strictly enforced
         if predicted_class == "normal":
@@ -164,8 +176,13 @@ class ExternalEyeMLService:
             ]
         else:
             risk_level = "attention"
+            detail = class_descriptions.get(
+                predicted_class,
+                f"Possible appearance indicator '{predicted_class}' detected."
+            )
             findings = [
                 f"Preliminary screening flagged possible appearance indicator '{predicted_class}' for the {eye_side} eye.",
+                detail,
                 "This is a software screening indicator and not a medical diagnosis. A clinical assessment by an eye-care professional is advised if symptoms persist."
             ]
 
