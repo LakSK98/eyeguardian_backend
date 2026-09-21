@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Near Vision Screening | EyeGUARDIAN Vision</title>
+<script src="js/api.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --panel:#081624;
+    --cyan:#27e4f2;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff7183;
+    --white:#f4fcff;
+    --muted:#71899a;
+    --border:rgba(124,211,232,.10);
+}
+
+body{
+    min-height:100vh;
+    font-family:"Segoe UI","Inter",Arial,sans-serif;
+    color:var(--white);
+
+    background:
+        radial-gradient(circle at 78% 5%,rgba(27,201,226,.10),transparent 27%),
+        radial-gradient(circle at 93% 65%,rgba(102,76,255,.07),transparent 30%),
+        var(--bg);
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(rgba(74,210,230,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(74,210,230,.025) 1px,transparent 1px);
+
+    background-size:55px 55px;
+}
+
+/* HEADER */
+
+.topbar{
+    height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 45px;
+
+    border-bottom:1px solid rgba(71,206,226,.08);
+
+    background:rgba(4,13,23,.82);
+    backdrop-filter:blur(18px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:43px;
+    height:43px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(59,230,244,.15),
+            rgba(12,31,48,.95) 55%,
+            rgba(5,16,28,.98)
+        );
+
+    border:1px solid rgba(68,221,238,.22);
+}
+
+.guardian-logo{
+    width:30px;
+    height:30px;
+}
+
+.logo-eye{
+    fill:rgba(39,228,242,.035);
+    stroke:#54ddea;
+    stroke-width:2;
+}
+
+.logo-iris{
+    fill:none;
+    stroke:#69eff1;
+    stroke-width:2;
+}
+
+.logo-core{
+    fill:#d9ffff;
+}
+
+.logo-node{
+    fill:#55e8a8;
+}
+
+.logo-connect{
+    fill:none;
+    stroke:#398fa4;
+    stroke-width:1.3;
+}
+
+.brand-name{
+    font-size:18px;
+    font-weight:700;
+}
+
+.brand-name span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+    margin-top:2px;
+    color:#506c7e;
+    font-size:9px;
+    letter-spacing:1.6px;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.status-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:8px 12px;
+
+    border-radius:10px;
+
+    background:rgba(85,232,168,.045);
+    border:1px solid rgba(85,232,168,.10);
+
+    color:#72dfaf;
+    font-size:10px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 8px rgba(85,232,168,.7);
+}
+
+.exit-button{
+    padding:8px 13px;
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.025);
+
+    color:#7893a4;
+    cursor:pointer;
+}
+
+/* MAIN */
+
+.container{
+    max-width:1300px;
+    margin:auto;
+    padding:34px 35px 50px;
+}
+
+.page-intro{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:30px;
+    margin-bottom:26px;
+}
+
+.eyebrow{
+    color:var(--cyan);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:2px;
+    margin-bottom:7px;
+}
+
+.page-intro h1{
+    font-size:38px;
+    font-weight:650;
+    letter-spacing:-.8px;
+}
+
+.page-intro h1 span{
+    color:var(--cyan);
+}
+
+.page-intro p{
+    margin-top:7px;
+    max-width:730px;
+    color:#8099aa;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.stage{
+    text-align:right;
+}
+
+.stage small{
+    display:block;
+    color:#4f697b;
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+.stage strong{
+    display:block;
+    margin-top:4px;
+    color:#a8c5d3;
+    font-size:14px;
+}
+
+/* CARD */
+
+.card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,28,46,.91),
+            rgba(6,16,28,.95)
+        );
+
+    border:1px solid var(--border);
+    border-radius:19px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.13);
+}
+
+/* PROGRESS */
+
+.progress-card{
+    padding:19px 25px;
+    margin-bottom:20px;
+}
+
+.progress{
+    position:relative;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+}
+
+.progress::before{
+    content:"";
+    position:absolute;
+    top:18px;
+    left:8%;
+    right:8%;
+    height:1px;
+    background:rgba(76,145,161,.18);
+}
+
+.progress-step{
+    position:relative;
+    z-index:2;
+    text-align:center;
+}
+
+.progress-circle{
+    width:38px;
+    height:38px;
+    margin:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    background:#071521;
+    border:1px solid rgba(86,149,165,.20);
+
+    color:#587384;
+    font-size:10px;
+}
+
+.progress-step.complete .progress-circle{
+    color:#6edeb1;
+    border-color:rgba(85,232,168,.22);
+    background:rgba(85,232,168,.055);
+}
+
+.progress-step.active .progress-circle{
+    color:#031115;
+    border:none;
+    background:linear-gradient(135deg,#27e4f2,#55e8a8);
+    box-shadow:0 0 18px rgba(39,228,242,.16);
+}
+
+.progress-step span{
+    display:block;
+    margin-top:7px;
+    color:#4f697a;
+    font-size:9px;
+    font-weight:600;
+}
+
+.progress-step.complete span{
+    color:#64a58b;
+}
+
+.progress-step.active span{
+    color:#82dce5;
+}
+
+/* PATIENT BAR */
+
+.patient-bar{
+    display:grid;
+    grid-template-columns:1.5fr 1fr .6fr .7fr;
+    overflow:hidden;
+    margin-bottom:17px;
+}
+
+.patient-data{
+    padding:15px 17px;
+    border-right:1px solid rgba(255,255,255,.035);
+}
+
+.patient-data:last-child{
+    border-right:none;
+}
+
+.patient-data span{
+    display:block;
+    color:#506b7d;
+    font-size:8px;
+    letter-spacing:1.1px;
+}
+
+.patient-data strong{
+    display:block;
+    margin-top:4px;
+    color:#b7ced9;
+    font-size:12px;
+    font-weight:500;
+}
+
+.cyan{
+    color:var(--cyan)!important;
+}
+
+/* CONTENT GRID */
+
+.content-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 315px;
+    gap:18px;
+}
+
+/* TEST PANEL */
+
+.test-panel{
+    padding:27px;
+}
+
+.test-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    margin-bottom:18px;
+}
+
+.section-heading{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.section-icon{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:rgba(39,228,242,.065);
+    border:1px solid rgba(39,228,242,.09);
+
+    color:var(--cyan);
+    font-size:17px;
+}
+
+.section-heading h2{
+    font-size:17px;
+    font-weight:650;
+}
+
+.section-heading p{
+    margin-top:4px;
+    color:#718b9c;
+    font-size:10px;
+}
+
+.test-level{
+    color:#6c8798;
+    font-size:10px;
+    letter-spacing:.8px;
+}
+
+/* LEVEL PROGRESS */
+
+.level-progress{
+    display:flex;
+    gap:7px;
+    margin-bottom:20px;
+}
+
+.level-progress span{
+    flex:1;
+    height:4px;
+    border-radius:10px;
+    background:rgba(255,255,255,.055);
+}
+
+.level-progress span.done{
+    background:rgba(85,232,168,.55);
+}
+
+.level-progress span.active{
+    background:var(--cyan);
+    box-shadow:0 0 9px rgba(39,228,242,.35);
+}
+
+/* READING PANEL */
+
+.reading-area{
+    display:grid;
+    grid-template-columns:minmax(350px,1fr) minmax(280px,.8fr);
+    gap:26px;
+    align-items:center;
+
+    padding:25px;
+
+    border-radius:17px;
+
+    background:
+        radial-gradient(
+            circle at 32% 50%,
+            rgba(39,228,242,.045),
+            transparent 45%
+        ),
+        rgba(1,9,17,.40);
+
+    border:1px solid rgba(82,176,197,.07);
+}
+
+.reading-card{
+    min-height:330px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    padding:35px 40px;
+
+    border-radius:16px;
+
+    background:#f4f5f2;
+
+    color:#172027;
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.24);
+
+    text-align:center;
+}
+
+.reading-label{
+    color:#718087;
+    font-size:10px;
+    letter-spacing:1.6px;
+    font-weight:700;
+    margin-bottom:23px;
+}
+
+.reading-text{
+    font-size:30px;
+    font-weight:600;
+    line-height:1.55;
+    letter-spacing:.3px;
+
+    transition:
+        font-size .35s ease,
+        opacity .25s ease;
+}
+
+.reading-footer{
+    margin-top:25px;
+    color:#87949a;
+    font-size:9px;
+}
+
+/* RESPONSE */
+
+.response-panel{
+    padding:8px 3px;
+}
+
+.response-label{
+    color:var(--cyan);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    margin-bottom:8px;
+}
+
+.response-panel h3{
+    font-size:23px;
+    font-weight:600;
+    margin-bottom:7px;
+}
+
+.response-panel > p{
+    color:#6f899a;
+    font-size:11px;
+    line-height:1.6;
+    margin-bottom:19px;
+}
+
+.answer-buttons{
+    display:grid;
+    gap:9px;
+}
+
+.answer-button{
+    padding:14px 13px;
+
+    border-radius:11px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    background:rgba(255,255,255,.025);
+
+    color:#9db4c0;
+
+    font-size:11px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.answer-button:hover{
+    transform:translateY(-1px);
+    border-color:rgba(39,228,242,.22);
+    background:rgba(39,228,242,.045);
+    color:#dffcff;
+}
+
+.answer-button.selected{
+    color:#eaffff;
+    border-color:rgba(39,228,242,.38);
+    background:rgba(39,228,242,.09);
+
+    box-shadow:
+        inset 3px 0 0 rgba(39,228,242,.75);
+}
+
+.next-button{
+    width:100%;
+    margin-top:14px;
+    padding:14px;
+
+    border:none;
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #20cbdc,
+            #4ad7bd
+        );
+
+    color:#031216;
+
+    font-size:10px;
+    font-weight:750;
+    letter-spacing:.5px;
+
+    cursor:pointer;
+}
+
+.next-button:hover{
+    box-shadow:
+        0 8px 25px rgba(32,203,220,.18);
+}
+
+/* SIDE COLUMN */
+
+.side-column{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.side-card{
+    padding:20px;
+}
+
+.side-title{
+    color:#c7dce5;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:14px;
+}
+
+.level-box{
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    background:
+        radial-gradient(
+            circle at right,
+            rgba(39,228,242,.09),
+            transparent 55%
+        ),
+        rgba(255,255,255,.02);
+
+    border:1px solid rgba(39,228,242,.07);
+}
+
+.level-circle{
+    width:57px;
+    height:57px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    border:1px solid rgba(39,228,242,.25);
+
+    color:var(--cyan);
+
+    font-size:18px;
+    font-weight:600;
+}
+
+.level-box span{
+    color:#5c7687;
+    font-size:9px;
+}
+
+.level-box strong{
+    display:block;
+    margin-top:3px;
+    color:#a9c1cd;
+    font-size:11px;
+}
+
+.instruction-row{
+    display:flex;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.035);
+}
+
+.instruction-number{
+    width:23px;
+    height:23px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:7px;
+
+    background:rgba(39,228,242,.055);
+
+    color:#67d8e2;
+    font-size:8px;
+}
+
+.instruction-row p{
+    color:#718a9b;
+    font-size:9px;
+    line-height:1.55;
+}
+
+.info-card{
+    padding:19px;
+    border-color:rgba(255,210,105,.10);
+}
+
+.info-label{
+    color:var(--yellow);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1px;
+    margin-bottom:7px;
+}
+
+.info-card h3{
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.info-card p{
+    color:#637c8d;
+    font-size:10px;
+    line-height:1.65;
+}
+
+/* ACTION BAR */
+
+.action-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:18px;
+
+    padding:17px 20px;
+
+    border-radius:16px;
+
+    background:rgba(7,20,34,.75);
+    border:1px solid rgba(99,185,205,.08);
+}
+
+.back-button{
+    padding:12px 18px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    background:transparent;
+
+    color:#708999;
+
+    font-size:10px;
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+.continue-button{
+    padding:13px 24px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #20cbdc,
+            #4ad7bd
+        );
+
+    color:#031216;
+
+    font-size:11px;
+    font-weight:750;
+
+    cursor:pointer;
+}
+
+.continue-button:disabled{
+    opacity:.32;
+    cursor:not-allowed;
+}
+
+.action-note{
+    color:#4f697b;
+    font-size:9px;
+    letter-spacing:.5px;
+}
+
+@media(max-width:1000px){
+
+    .content-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:800px){
+
+    .reading-area{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:650px){
+
+    .topbar{
+        padding:0 18px;
+    }
+
+    .container{
+        padding:25px 18px;
+    }
+
+    .page-intro{
+        display:block;
+    }
+
+    .stage{
+        margin-top:14px;
+        text-align:left;
+    }
+
+    .progress{
+        grid-template-columns:repeat(3,1fr);
+        gap:17px;
+    }
+
+    .progress::before{
+        display:none;
+    }
+
+    .patient-bar{
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+/* =========================================================
+   LETTER READING + TYPED RESPONSE
+========================================================= */
+
+.letter-sequence{
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-weight:700;
+
+    letter-spacing:12px;
+
+    word-spacing:8px;
+
+    line-height:1.7;
+
+    text-transform:none;
+
+    white-space:normal;
+}
+
+.typing-area{
+    margin-top:28px;
+
+    padding-top:20px;
+
+    border-top:
+        1px solid
+        rgba(0,0,0,.10);
+
+    text-align:left;
+}
+
+.typing-area label{
+    display:block;
+
+    margin-bottom:8px;
+
+    color:#5e6e76;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    letter-spacing:1.2px;
+}
+
+.typing-area input{
+    width:100%;
+
+    padding:13px 14px;
+
+    border-radius:10px;
+
+    border:
+        1px solid
+        rgba(20,50,60,.16);
+
+    outline:none;
+
+    background:#ffffff;
+
+    color:#18252c;
+
+    font-size:14px;
+
+    letter-spacing:3px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    transition:.2s;
+}
+
+.typing-area input:focus{
+    border-color:#27b7c7;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(39,183,199,.08);
+}
+</style>
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+<div class="brand">
+
+    <div class="brand-logo">
+
+        <svg class="guardian-logo" viewBox="0 0 64 64">
+
+            <path
+                d="M7 32 C14 19 22 14 32 14 C42 14 50 19 57 32 C50 45 42 50 32 50 C22 50 14 45 7 32Z"
+                class="logo-eye"
+            />
+
+            <circle cx="32" cy="32" r="10" class="logo-iris"/>
+            <circle cx="32" cy="32" r="4" class="logo-core"/>
+
+            <circle cx="32" cy="14" r="1.8" class="logo-node"/>
+            <circle cx="50" cy="32" r="1.8" class="logo-node"/>
+            <circle cx="32" cy="50" r="1.8" class="logo-node"/>
+            <circle cx="14" cy="32" r="1.8" class="logo-node"/>
+
+            <path
+                d="M32 14 V20 M50 32 H44 M32 50 V44 M14 32 H20"
+                class="logo-connect"
+            />
+
+        </svg>
+
+    </div>
+
+    <div>
+
+        <div class="brand-name">
+            Eye<span>GUARDIAN</span> Vision
+        </div>
+
+        <div class="brand-sub">
+            SMART EYECARE SCREENING
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="header-right">
+
+    <div class="status-pill">
+        <span class="dot"></span>
+        NEAR VISION TEST ACTIVE
+    </div>
+
+    <button
+        class="exit-button"
+        onclick="goHome()"
+    >
+        × Exit Screening
+    </button>
+
+</div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<section class="page-intro">
+
+<div>
+
+    <div class="eyebrow">
+        SCREENING SESSION / STEP 04B
+    </div>
+
+    <h1>
+        Near Vision <span>Screening</span>
+    </h1>
+
+    <p>
+        Read the displayed passage at the instructed viewing
+        distance. EyeGUARDIAN will progressively reduce the text
+        size and record the smallest demonstration level that can
+        be read comfortably.
+    </p>
+
+</div>
+
+
+<div class="stage">
+
+    <small>CURRENT STAGE</small>
+
+    <strong>
+        04B / NEAR VISION
+    </strong>
+
+</div>
+
+</section>
+
+
+
+<section class="card progress-card">
+
+<div class="progress">
+
+    <div class="progress-step complete">
+        <div class="progress-circle">✓</div>
+        <span>REGISTER</span>
+    </div>
+
+    <div class="progress-step complete">
+        <div class="progress-circle">✓</div>
+        <span>SYMPTOMS</span>
+    </div>
+
+    <div class="progress-step complete">
+        <div class="progress-circle">✓</div>
+        <span>CAPTURE</span>
+    </div>
+
+    <div class="progress-step active">
+        <div class="progress-circle">04</div>
+        <span>VISION TESTS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">05</div>
+        <span>ANALYSIS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">06</div>
+        <span>REPORT</span>
+    </div>
+
+</div>
+
+</section>
+
+
+
+<section class="card patient-bar">
+
+<div class="patient-data">
+
+    <span>PATIENT</span>
+
+    <strong id="patientName">
+        Screening User
+    </strong>
+
+</div>
+
+
+<div class="patient-data">
+
+    <span>SCREENING ID</span>
+
+    <strong
+        class="cyan"
+        id="screeningID"
+    >
+        EGV
+    </strong>
+
+</div>
+
+
+<div class="patient-data">
+
+    <span>AGE</span>
+
+    <strong id="patientAge">
+        --
+    </strong>
+
+</div>
+
+
+<div class="patient-data">
+
+    <span>MODULE</span>
+
+    <strong>
+        Near Vision
+    </strong>
+
+</div>
+
+</section>
+
+
+
+<div class="content-grid">
+
+
+<section class="card test-panel">
+
+
+<div class="test-header">
+
+    <div class="section-heading">
+
+        <div class="section-icon">
+            Aa
+        </div>
+
+        <div>
+
+            <h2>
+                Progressive Near Reading Test
+            </h2>
+
+            <p>
+                Read each level using your normal near-viewing position
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="test-level"
+        id="testLevel"
+    > LEVEL 1 OF 3 
+        
+    </div>
+
+</div>
+
+
+
+<div
+    class="level-progress"
+    id="levelProgress"
+></div>
+
+
+
+<div class="reading-area">
+
+
+<div class="reading-card">
+
+    <div class="reading-label">
+        READING SAMPLE
+    </div>
+
+
+<div
+    class="reading-text letter-sequence"
+    id="readingText"
+>
+    H b R m K q T a
+</div>
+
+<div class="typing-area">
+
+    <label for="typedAnswer">
+        TYPE EXACTLY WHAT YOU CAN SEE
+    </label>
+
+    <input
+        type="text"
+        id="typedAnswer"
+        placeholder="Type the letters here..."
+        autocomplete="off"
+    >
+
+</div>
+
+    <div class="reading-footer">
+        Maintain the instructed viewing distance • Do not move closer to the screen
+    </div>
+
+</div>
+
+
+
+<div class="response-panel">
+
+    <div class="response-label">
+        READING RESPONSE
+    </div>
+
+    <h3>
+        Can you read this clearly?
+    </h3>
+
+    <p>
+        Choose the response that best describes how comfortably
+        you can read the complete passage at this level.
+    </p>
+
+
+    <div
+        class="answer-buttons"
+        id="answerButtons"
+    >
+
+        <button
+            type="button"
+            class="answer-button"
+            data-answer="Clear"
+        >
+            ✓ YES — READ CLEARLY
+        </button>
+
+
+        <button
+            type="button"
+            class="answer-button"
+            data-answer="Difficulty"
+        >
+            ◈ READ WITH DIFFICULTY
+        </button>
+
+
+        <button
+            type="button"
+            class="answer-button"
+            data-answer="Cannot"
+        >
+            × CANNOT READ
+        </button>
+
+    </div>
+
+
+    <button
+        class="next-button"
+        onclick="confirmLevel()"
+    >
+        CONFIRM RESPONSE & CONTINUE →
+    </button>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+<aside class="side-column">
+
+
+<div class="card side-card">
+
+    <div class="side-title">
+        Current Reading Level
+    </div>
+
+
+    <div class="level-box">
+
+        <div
+            class="level-circle"
+            id="levelCircle"
+        >
+            1
+        </div>
+
+        <div>
+
+            <span>CURRENT LEVEL</span>
+
+            <strong id="levelDescription">
+                Large Reading Text
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="card side-card">
+
+    <div class="side-title">
+        Screening Instructions
+    </div>
+
+
+    <div class="instruction-row">
+
+        <div class="instruction-number">
+            01
+        </div>
+
+        <p>
+            Sit comfortably and keep the screen at the
+            instructed near-reading distance.
+        </p>
+
+    </div>
+
+
+    <div class="instruction-row">
+
+        <div class="instruction-number">
+            02
+        </div>
+
+        <p>
+            Use your normal reading glasses if you usually
+            wear them for near tasks.
+        </p>
+
+    </div>
+
+
+    <div class="instruction-row">
+
+        <div class="instruction-number">
+            03
+        </div>
+
+        <p>
+            Read the complete passage without moving your
+            face closer to the display.
+        </p>
+
+    </div>
+
+
+    <div class="instruction-row">
+
+        <div class="instruction-number">
+            04
+        </div>
+
+        <p>
+            Select the response that best represents your
+            reading comfort at each level.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div class="card info-card">
+
+    <div class="info-label">
+        PROTOTYPE MODULE
+    </div>
+
+    <h3>
+        Display-dependent screening
+    </h3>
+
+    <p>
+        Text size on an ordinary computer screen is affected by
+        display size, browser zoom and viewing distance. This
+        prototype demonstrates the workflow and does not provide
+        calibrated near visual acuity.
+    </p>
+
+</div>
+
+
+</aside>
+
+
+</div>
+
+
+
+<div class="action-bar">
+
+
+<button
+    class="back-button"
+    onclick="goBack()"
+>
+    ← Back to Colour Vision
+</button>
+
+
+<div
+    class="action-note"
+    id="actionNote"
+>
+    COMPLETE THE NEAR VISION LEVELS TO CONTINUE
+</div>
+
+
+<button
+    class="continue-button"
+    id="continueButton"
+    onclick="continueScreening()"
+    disabled
+>
+    CONTINUE TO ANALYSIS →
+</button>
+
+
+</div>
+
+
+</main>
+
+<script>
+
+/* =========================================================
+   PATIENT DATA
+========================================================= */
+
+const patient =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianPatient") || "{}"
+    );
+
+const screeningID =
+    sessionStorage.getItem("screeningID") || "EGV";
+
+
+if(patient.fullName){
+
+    document.getElementById("patientName").textContent =
+        patient.fullName;
+
+}
+
+if(patient.age){
+
+    document.getElementById("patientAge").textContent =
+        patient.age;
+
+}
+
+document.getElementById("screeningID").textContent =
+    screeningID;
+
+
+/* =========================================================
+   NEAR VISION LEVELS
+========================================================= */
+
+const levels = [
+
+    {
+        size:18,
+        description:"Large Letter Level",
+        sequence:"H b R m K q T a"
+    },
+
+    {
+        size:14,
+        description:"Medium Letter Level",
+        sequence:"p F x C n W e J"
+    },
+
+    {
+        size:11,
+        description:"Small Letter Level",
+        sequence:"g M r A y D k P"
+    }
+
+];
+
+let currentLevel = 0;
+
+let selectedResponse = null;
+
+let responses = [];
+
+let smallestClearLevel = null;
+
+
+/* =========================================================
+   ANSWER SELECTION
+========================================================= */
+
+document
+.querySelectorAll(".answer-button")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        function(){
+
+            document
+            .querySelectorAll(".answer-button")
+            .forEach(btn =>
+                btn.classList.remove("selected")
+            );
+
+            this.classList.add("selected");
+
+            selectedResponse =
+                this.dataset.answer;
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   DISPLAY LEVEL
+========================================================= */
+
+function renderLevel(){
+
+    selectedResponse = null;
+
+    document
+    .querySelectorAll(".answer-button")
+    .forEach(btn =>
+        btn.classList.remove("selected")
+    );
+
+
+    const data =
+        levels[currentLevel];
+
+
+    const readingText =
+        document.getElementById("readingText");
+
+
+    const typedAnswer =
+        document.getElementById("typedAnswer");
+
+
+    readingText.style.opacity =
+        "0";
+
+
+    typedAnswer.value =
+        "";
+
+
+    setTimeout(() => {
+
+        readingText.textContent =
+            data.sequence;
+
+        readingText.style.fontSize =
+            data.size + "px";
+
+        readingText.style.opacity =
+            "1";
+
+    },150);
+
+
+    document.getElementById("testLevel").textContent =
+        `LEVEL ${currentLevel + 1} OF ${levels.length}`;
+
+
+    document.getElementById("levelCircle").textContent =
+        currentLevel + 1;
+
+
+    document.getElementById("levelDescription").textContent =
+        data.description;
+
+
+    renderProgress();
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+function renderProgress(){
+
+    const progress =
+        document.getElementById("levelProgress");
+
+    progress.innerHTML =
+        "";
+
+
+    levels.forEach((level,index) => {
+
+        const bar =
+            document.createElement("span");
+
+
+        if(index < currentLevel){
+            bar.classList.add("done");
+        }
+
+
+        if(index === currentLevel){
+            bar.classList.add("active");
+        }
+
+
+        progress.appendChild(bar);
+
+    });
+
+}
+
+
+/* =========================================================
+   CONFIRM LEVEL
+========================================================= */
+
+function confirmLevel(){
+
+    const typedAnswer =
+        document.getElementById("typedAnswer")
+        .value
+        .trim();
+
+
+    if(typedAnswer === ""){
+
+        alert(
+            "Please type the letters you can see before continuing."
+        );
+
+        return;
+
+    }
+
+
+    if(selectedResponse === null){
+
+        alert(
+            "Please select how clearly you could read the letters."
+        );
+
+        return;
+
+    }
+
+
+    const expected =
+        levels[currentLevel].sequence;
+
+
+    const normalise =
+        text =>
+            text
+                .replace(/\s+/g,"")
+                .trim();
+
+
+    const typedNormal =
+        normalise(
+            typedAnswer
+        );
+
+
+    const expectedNormal =
+        normalise(
+            expected
+        );
+
+
+    let correctCharacters =
+        0;
+
+
+    const compareLength =
+        Math.max(
+            typedNormal.length,
+            expectedNormal.length
+        );
+
+
+    for(
+        let i = 0;
+        i < compareLength;
+        i++
+    ){
+
+        if(
+            typedNormal[i] ===
+            expectedNormal[i]
+        ){
+
+            correctCharacters++;
+
+        }
+
+    }
+
+
+    const accuracy =
+        Math.round(
+            (
+                correctCharacters /
+                expectedNormal.length
+            ) * 100
+        );
+
+
+    responses.push({
+
+        level:
+            currentLevel + 1,
+
+        textSize:
+            levels[currentLevel].size,
+
+        expected:
+            expected,
+
+        typed:
+            typedAnswer,
+
+        accuracy:
+            accuracy,
+
+        response:
+            selectedResponse
+
+    });
+
+
+    if(
+        selectedResponse === "Clear" &&
+        accuracy >= 80
+    ){
+
+        smallestClearLevel =
+            currentLevel + 1;
+
+    }
+
+
+    if(
+        currentLevel <
+        levels.length - 1
+    ){
+
+        currentLevel++;
+
+        renderLevel();
+
+        return;
+
+    }
+
+
+    finishTest();
+
+}
+
+/* =========================================================
+   FINISH
+========================================================= */
+
+function finishTest(){
+
+    let totalAccuracy = 0;
+    if(Array.isArray(responses) && responses.length > 0){
+        responses.forEach(r => {
+            totalAccuracy += (typeof r.accuracy === "number" ? r.accuracy : 80);
+        });
+    }
+    const nearScore = responses.length > 0 ? (totalAccuracy / (responses.length * 100)) : 0.85;
+
+    const result = {
+        completed:true,
+        totalLevels: levels.length,
+        completedLevels: responses.length,
+        smallestClearLevel: smallestClearLevel,
+        near_vision_score: Math.round(nearScore * 100) / 100,
+        responses: responses,
+        module: "Prototype near vision screening"
+    };
+
+    sessionStorage.setItem(
+        "eyeGuardianNearVision",
+        JSON.stringify(result)
+    );
+
+    // Sync vision tests to backend
+    const colourData = JSON.parse(sessionStorage.getItem("eyeGuardianColourVision") || "{}");
+    const colorScore = typeof colourData.color_score === "number" ? colourData.color_score : 1.0;
+
+    EyeGuardAPI.submitVisionTests(screeningID, {
+        color_score: colorScore,
+        near_vision_score: result.near_vision_score,
+        color_answers: colourData.responses || [],
+        near_answers: responses
+    }).then(res => {
+        document.getElementById("actionNote").textContent = "✓ VISION TESTS SYNCED TO BACKEND";
+    }).catch(e => {
+        console.warn("Backend vision test sync deferred:", e);
+    });
+
+    document.getElementById("actionNote").textContent =
+        "NEAR VISION SCREENING COMPLETED";
+
+    document.getElementById("continueButton").disabled =
+        false;
+
+
+    document
+    .querySelectorAll(".answer-button")
+    .forEach(button =>
+        button.disabled = true
+    );
+
+
+    document.querySelector(".next-button").disabled =
+        true;
+
+
+    document.querySelector(".next-button").textContent =
+        "SCREENING COMPLETED ✓";
+
+
+    document.getElementById("readingText").textContent =
+        "✓ Near vision screening completed";
+
+
+    document.getElementById("readingText").style.fontSize =
+        "24px";
+
+
+    document.getElementById("readingText").style.color =
+        "#187d63";
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function continueScreening(){
+
+    window.location.href =
+        "analysis.html";
+
+}
+
+
+function goBack(){
+
+    window.location.href =
+        "colour-vision.html";
+
+}
+
+
+function goHome(){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* START */
+
+renderLevel();
+
+</script>
+
+
+</body>
+</html>

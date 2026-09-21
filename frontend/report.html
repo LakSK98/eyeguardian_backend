@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Screening Report | EyeGUARDIAN Vision</title>
+<script src="js/api.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --panel:#081624;
+    --cyan:#27e4f2;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff7183;
+    --white:#f4fcff;
+    --muted:#71899a;
+    --border:rgba(124,211,232,.10);
+}
+
+body{
+    min-height:100vh;
+    font-family:"Segoe UI","Inter",Arial,sans-serif;
+    color:var(--white);
+
+    background:
+        radial-gradient(circle at 78% 5%,rgba(27,201,226,.10),transparent 27%),
+        radial-gradient(circle at 93% 65%,rgba(102,76,255,.07),transparent 30%),
+        var(--bg);
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(rgba(74,210,230,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(74,210,230,.025) 1px,transparent 1px);
+
+    background-size:55px 55px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.topbar{
+    height:76px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 45px;
+
+    border-bottom:1px solid rgba(71,206,226,.08);
+
+    background:rgba(4,13,23,.82);
+    backdrop-filter:blur(18px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:43px;
+    height:43px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(59,230,244,.15),
+            rgba(12,31,48,.95) 55%,
+            rgba(5,16,28,.98)
+        );
+
+    border:1px solid rgba(68,221,238,.22);
+}
+
+.guardian-logo{
+    width:30px;
+    height:30px;
+}
+
+.logo-eye{
+    fill:rgba(39,228,242,.035);
+    stroke:#54ddea;
+    stroke-width:2;
+}
+
+.logo-iris{
+    fill:none;
+    stroke:#69eff1;
+    stroke-width:2;
+}
+
+.logo-core{
+    fill:#d9ffff;
+}
+
+.logo-node{
+    fill:#55e8a8;
+}
+
+.logo-connect{
+    fill:none;
+    stroke:#398fa4;
+    stroke-width:1.3;
+}
+
+.brand-name{
+    font-size:18px;
+    font-weight:700;
+}
+
+.brand-name span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+    margin-top:2px;
+    color:#506c7e;
+    font-size:9px;
+    letter-spacing:1.6px;
+}
+
+.header-right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.status-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:8px 12px;
+
+    border-radius:10px;
+
+    background:rgba(85,232,168,.045);
+    border:1px solid rgba(85,232,168,.10);
+
+    color:#72dfaf;
+    font-size:10px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 8px rgba(85,232,168,.7);
+}
+
+.exit-button{
+    padding:8px 13px;
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.025);
+
+    color:#7893a4;
+    cursor:pointer;
+}
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:34px 35px 50px;
+}
+
+.page-intro{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+
+    gap:30px;
+    margin-bottom:24px;
+}
+
+.eyebrow{
+    color:var(--cyan);
+
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:2px;
+
+    margin-bottom:7px;
+}
+
+.page-intro h1{
+    font-size:38px;
+    font-weight:650;
+}
+
+.page-intro h1 span{
+    color:var(--cyan);
+}
+
+.page-intro p{
+    margin-top:7px;
+
+    max-width:750px;
+
+    color:#8099aa;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.report-id-box{
+    text-align:right;
+}
+
+.report-id-box small{
+    display:block;
+    color:#4f697b;
+    font-size:9px;
+}
+
+.report-id-box strong{
+    display:block;
+    margin-top:4px;
+    color:var(--cyan);
+    font-size:13px;
+}
+
+/* =====================================================
+   REPORT PAPER
+===================================================== */
+
+.report-paper{
+    background:#f7fafb;
+    color:#18232a;
+
+    border-radius:20px;
+
+    padding:36px;
+
+    box-shadow:0 25px 65px rgba(0,0,0,.30);
+}
+
+.report-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    gap:30px;
+
+    padding-bottom:24px;
+
+    border-bottom:2px solid #dbe7eb;
+}
+
+.report-brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.report-logo{
+    width:52px;
+    height:52px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:#0b2532;
+    color:#27d4e5;
+
+    font-size:23px;
+}
+
+.report-brand h2{
+    font-size:23px;
+    color:#102833;
+}
+
+.report-brand h2 span{
+    color:#159aae;
+}
+
+.report-brand p{
+    margin-top:4px;
+    color:#697d87;
+    font-size:10px;
+}
+
+.report-meta{
+    text-align:right;
+}
+
+.report-meta span{
+    display:block;
+    color:#73868e;
+    font-size:9px;
+}
+
+.report-meta strong{
+    display:block;
+    margin-top:3px;
+    color:#21343c;
+    font-size:11px;
+}
+
+/* =====================================================
+   STATUS BANNER
+===================================================== */
+
+.status-banner{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:17px;
+    align-items:center;
+
+    margin-top:24px;
+
+    padding:18px 20px;
+
+    border-radius:13px;
+
+    background:#edf8f7;
+    border:1px solid #cbe9e5;
+}
+
+.status-symbol{
+    width:46px;
+    height:46px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#d7f3ec;
+    color:#18866f;
+
+    font-size:22px;
+    font-weight:700;
+}
+
+.status-banner h3{
+    color:#163740;
+    font-size:15px;
+}
+
+.status-banner p{
+    margin-top:4px;
+
+    color:#657b84;
+
+    font-size:10px;
+    line-height:1.55;
+}
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+.report-section{
+    margin-top:27px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    margin-bottom:13px;
+
+    color:#17333d;
+
+    font-size:14px;
+    font-weight:700;
+}
+
+.section-title::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#dce7eb;
+}
+
+/* PATIENT DETAILS */
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.info-box{
+    padding:13px;
+
+    border-radius:10px;
+
+    background:#f0f5f7;
+    border:1px solid #e0eaee;
+}
+
+.info-box span{
+    display:block;
+
+    color:#7c8d95;
+
+    font-size:8px;
+    letter-spacing:.7px;
+}
+
+.info-box strong{
+    display:block;
+
+    margin-top:5px;
+
+    color:#23363e;
+
+    font-size:11px;
+    font-weight:600;
+}
+
+/* RESULT GRID */
+
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.result-card{
+    padding:17px;
+
+    border-radius:12px;
+
+    background:#f3f7f8;
+    border:1px solid #e0e9ec;
+}
+
+.result-card h4{
+    color:#213840;
+    font-size:12px;
+    margin-bottom:12px;
+}
+
+.result-row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+
+    padding:8px 0;
+
+    border-bottom:1px solid #e3ecef;
+}
+
+.result-row:last-child{
+    border-bottom:none;
+}
+
+.result-row span{
+    color:#71848d;
+    font-size:9px;
+}
+
+.result-row strong{
+    color:#273a42;
+    font-size:10px;
+    text-align:right;
+}
+
+/* SYMPTOMS */
+
+.symptoms{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.symptom-tag{
+    padding:7px 10px;
+
+    border-radius:8px;
+
+    background:#e8f5f6;
+    border:1px solid #d0e9eb;
+
+    color:#2a6873;
+
+    font-size:9px;
+}
+
+/* GUIDANCE */
+
+.guidance-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.guidance-card{
+    padding:16px;
+
+    border-radius:12px;
+
+    background:#f7f9fa;
+    border:1px solid #e1eaed;
+}
+
+.guidance-card h4{
+    color:#203941;
+    font-size:11px;
+    margin-bottom:9px;
+}
+
+.guidance-card ul{
+    margin-left:17px;
+}
+
+.guidance-card li{
+    margin-bottom:7px;
+
+    color:#667c85;
+
+    font-size:9px;
+    line-height:1.5;
+}
+
+/* REFERRAL */
+
+.referral{
+    margin-top:15px;
+
+    padding:17px;
+
+    border-radius:12px;
+
+    background:#fff8e9;
+    border:1px solid #f0dfb5;
+}
+
+.referral h4{
+    color:#8a661a;
+    font-size:11px;
+    margin-bottom:6px;
+}
+
+.referral p{
+    color:#796a48;
+    font-size:9px;
+    line-height:1.6;
+}
+
+/* DISCLAIMER */
+
+.disclaimer{
+    margin-top:25px;
+
+    padding-top:18px;
+
+    border-top:1px solid #dce7eb;
+
+    color:#7b8e97;
+
+    font-size:8px;
+    line-height:1.65;
+}
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.action-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-top:18px;
+
+    padding:16px 18px;
+
+    border-radius:15px;
+
+    background:rgba(7,20,34,.78);
+
+    border:1px solid rgba(99,185,205,.08);
+}
+
+.back-button,
+.home-button{
+    padding:11px 16px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    background:transparent;
+
+    color:#708999;
+
+    cursor:pointer;
+}
+
+.print-button{
+    padding:13px 23px;
+
+    border:none;
+    border-radius:10px;
+
+    background:linear-gradient(100deg,#20cbdc,#4ad7bd);
+
+    color:#031216;
+
+    font-size:11px;
+    font-weight:750;
+
+    cursor:pointer;
+}
+
+/* PRINT MODE */
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    body::before,
+    .topbar,
+    .page-intro,
+    .action-bar{
+        display:none !important;
+    }
+
+    .container{
+        max-width:none;
+        padding:0;
+    }
+
+    .report-paper{
+        box-shadow:none;
+        border-radius:0;
+        padding:20px;
+    }
+
+}
+
+@media(max-width:800px){
+
+    .info-grid,
+    .result-grid,
+    .guidance-grid{
+        grid-template-columns:1fr;
+    }
+
+    .page-intro{
+        display:block;
+    }
+
+    .report-id-box{
+        margin-top:15px;
+        text-align:left;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<header class="topbar">
+
+<div class="brand">
+
+    <div class="brand-logo">
+
+        <svg class="guardian-logo" viewBox="0 0 64 64">
+
+            <path
+                d="M7 32 C14 19 22 14 32 14 C42 14 50 19 57 32 C50 45 42 50 32 50 C22 50 14 45 7 32Z"
+                class="logo-eye"
+            />
+
+            <circle cx="32" cy="32" r="10" class="logo-iris"/>
+            <circle cx="32" cy="32" r="4" class="logo-core"/>
+
+            <circle cx="32" cy="14" r="1.8" class="logo-node"/>
+            <circle cx="50" cy="32" r="1.8" class="logo-node"/>
+            <circle cx="32" cy="50" r="1.8" class="logo-node"/>
+            <circle cx="14" cy="32" r="1.8" class="logo-node"/>
+
+            <path
+                d="M32 14 V20 M50 32 H44 M32 50 V44 M14 32 H20"
+                class="logo-connect"
+            />
+
+        </svg>
+
+    </div>
+
+    <div>
+
+        <div class="brand-name">
+            Eye<span>GUARDIAN</span> Vision
+        </div>
+
+        <div class="brand-sub">
+            SMART EYECARE SCREENING
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="header-right">
+
+    <div class="status-pill">
+
+        <span class="dot"></span>
+
+        REPORT READY
+
+    </div>
+
+    <button
+        class="exit-button"
+        onclick="goHome()"
+    >
+        × Exit Screening
+    </button>
+
+</div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<section class="page-intro">
+
+<div>
+
+    <div class="eyebrow">
+        SCREENING SESSION / STEP 06
+    </div>
+
+    <h1>
+        Screening <span>Report</span>
+    </h1>
+
+    <p>
+        A structured summary of information collected during the
+        EyeGUARDIAN Vision screening session.
+    </p>
+
+</div>
+
+
+<div class="report-id-box">
+
+    <small>SCREENING ID</small>
+
+    <strong id="topScreeningID">
+        EGV
+    </strong>
+
+</div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PRINTABLE REPORT
+====================================================== -->
+
+<section class="report-paper">
+
+
+<div class="report-header">
+
+
+<div class="report-brand">
+
+    <div class="report-logo">
+        ◉
+    </div>
+
+    <div>
+
+        <h2>
+            Eye<span>GUARDIAN</span> Vision
+        </h2>
+
+        <p>
+            Smart EyeCare Preliminary Screening Report
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="report-meta">
+
+    <span>SCREENING ID</span>
+    <strong id="reportScreeningID">EGV</strong>
+
+    <br>
+
+    <span>REPORT DATE</span>
+    <strong id="reportDate">--</strong>
+
+</div>
+
+
+</div>
+
+
+
+<!-- STATUS -->
+
+<div class="status-banner" style="display:flex; justify-content:space-between; align-items:center;">
+
+    <div style="display:flex; gap:16px; align-items:center;">
+        <div class="status-symbol" id="reportStatusSymbol">
+            ✓
+        </div>
+
+        <div>
+            <h3 id="reportTitle">
+                Screening Session Completed
+            </h3>
+
+            <p id="reportSubtitle">
+                EyeGUARDIAN Vision multi-modal preliminary screening results and guidance below.
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align:right; min-width:140px; padding-left:15px; border-left:1px solid rgba(255,255,255,0.06);">
+        <span style="font-size:8px; color:#7d96a8; letter-spacing:1px; display:block;">PRELIMINARY SCORE</span>
+        <strong id="reportScore" style="font-size:20px; color:#55e8a8; display:block; margin:2px 0;">-- / 100</strong>
+        <span id="reportRiskBadge" style="font-size:10px; font-weight:700; color:#55e8a8; background:rgba(85,232,168,0.15); padding:2px 8px; border-radius:10px; display:inline-block;">LOW RISK</span>
+    </div>
+
+</div>
+
+
+
+<!-- PATIENT -->
+
+<div class="report-section">
+
+<div class="section-title">
+    Patient Information
+</div>
+
+
+<div class="info-grid">
+
+    <div class="info-box">
+        <span>FULL NAME</span>
+        <strong id="patientName">Not recorded</strong>
+    </div>
+
+    <div class="info-box">
+        <span>AGE</span>
+        <strong id="patientAge">--</strong>
+    </div>
+
+    <div class="info-box">
+        <span>GENDER</span>
+        <strong id="patientGender">Not recorded</strong>
+    </div>
+
+    <div class="info-box">
+        <span>VISION AID</span>
+        <strong id="visionAid">Not recorded</strong>
+    </div>
+
+</div>
+
+</div>
+
+
+
+<!-- SYMPTOMS -->
+
+<div class="report-section">
+
+<div class="section-title">
+    Reported Symptoms
+</div>
+
+
+<div
+    class="symptoms"
+    id="symptomsList"
+>
+</div>
+
+</div>
+
+
+
+<!-- SCREENING RESULTS -->
+
+<div class="report-section">
+
+<div class="section-title">
+    Screening Module Summary
+</div>
+
+
+<div class="result-grid">
+
+
+<div class="result-card">
+
+    <h4>Eye Image Capture</h4>
+
+    <div class="result-row">
+        <span>Left Eye</span>
+        <strong id="leftEye">Not captured</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Right Eye</span>
+        <strong id="rightEye">Not captured</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Image Analysis</span>
+        <strong id="imageAnalysisSummary">Completed (AI Inference)</strong>
+    </div>
+
+</div>
+
+
+
+<div class="result-card">
+
+    <h4>Colour Vision Screening</h4>
+
+    <div class="result-row">
+        <span>Completed Plates</span>
+        <strong id="colourCompleted">--</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Total Plates</span>
+        <strong id="colourTotal">--</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Status</span>
+        <strong id="colourStatus">Not completed</strong>
+    </div>
+
+</div>
+
+
+
+<div class="result-card">
+
+    <h4>Near Vision Screening</h4>
+
+    <div class="result-row">
+        <span>Levels Completed</span>
+        <strong id="nearLevels">--</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Smallest Clear Level</span>
+        <strong id="smallestClear">--</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Latest Letter Accuracy</span>
+        <strong id="latestAccuracy">--</strong>
+    </div>
+
+</div>
+
+
+
+<div class="result-card">
+
+    <h4>Symptom Details</h4>
+
+    <div class="result-row">
+        <span>Affected Eye</span>
+        <strong id="affectedEye">Not specified</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Duration</span>
+        <strong id="symptomDuration">Not specified</strong>
+    </div>
+
+    <div class="result-row">
+        <span>Severity</span>
+        <strong id="symptomSeverity">Not specified</strong>
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<!-- GUIDANCE -->
+
+<div class="report-section">
+
+<div class="section-title">
+    General Eye-Care Guidance
+</div>
+
+
+<div class="guidance-grid">
+
+
+<div class="guidance-card">
+
+    <h4>Daily Eye Care</h4>
+
+    <ul>
+        <li>Use comfortable and appropriate lighting for reading and screen work.</li>
+        <li>Take regular visual breaks during prolonged near work.</li>
+        <li>Avoid rubbing the eyes unnecessarily.</li>
+        <li>Use prescribed spectacles or contact lenses as advised.</li>
+    </ul>
+
+</div>
+
+
+
+<div class="guidance-card">
+
+    <h4>Screen & Reading Habits</h4>
+
+    <ul>
+        <li>Maintain a comfortable viewing distance from digital screens.</li>
+        <li>Use the 20-20-20 rule during prolonged screen use.</li>
+        <li>Avoid excessively bright or dim display settings.</li>
+        <li>Seek an eye examination if persistent visual difficulty is noticed.</li>
+    </ul>
+
+</div>
+
+
+</div>
+
+
+
+<div class="referral">
+
+    <h4>
+        Professional Eye-Care Recommendation
+    </h4>
+
+    <p id="referralText">
+        This screening does not replace a comprehensive eye examination.
+        If symptoms are persistent, worsening, severe, or associated with
+        significant visual changes, professional ophthalmic assessment is recommended.
+    </p>
+
+</div>
+
+</div>
+
+
+
+<!-- DISCLAIMER -->
+
+<div class="disclaimer">
+
+    <strong>Important Notice:</strong>
+    EyeGUARDIAN Vision is currently a prototype preliminary eye-screening
+    system. The information shown in this report is based on data collected
+    during the prototype workflow and must not be considered a confirmed
+    medical diagnosis. Disease-detection and risk-classification features
+    require appropriate algorithm development, validation and professional
+    clinical oversight before use in healthcare decision-making.
+
+</div>
+
+
+</section>
+
+
+
+<!-- ACTIONS -->
+
+<div class="action-bar">
+
+<button
+    class="back-button"
+    onclick="goBack()"
+>
+    ← Back to Analysis
+</button>
+
+
+<button
+    class="home-button"
+    onclick="goHome()"
+>
+    Dashboard
+</button>
+
+
+<button
+    class="print-button"
+    onclick="printReport()"
+>
+    🖨 PRINT REPORT
+</button>
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+const patient =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianPatient") || "{}"
+    );
+
+const symptoms =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianSymptoms") || "{}"
+    );
+
+const capture =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianCapture") || "{}"
+    );
+
+const colour =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianColourVision") || "{}"
+    );
+
+const near =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianNearVision") || "{}"
+    );
+
+const screeningID =
+    sessionStorage.getItem("screeningID") || "EGV";
+
+
+/* =====================================================
+   DATE + ID
+===================================================== */
+
+document.getElementById("topScreeningID").textContent =
+    screeningID;
+
+document.getElementById("reportScreeningID").textContent =
+    screeningID;
+
+
+const today =
+    new Date();
+
+
+document.getElementById("reportDate").textContent =
+    today.toLocaleDateString();
+
+
+/* =====================================================
+   PATIENT
+===================================================== */
+
+document.getElementById("patientName").textContent =
+    patient.fullName || "Not recorded";
+
+document.getElementById("patientAge").textContent =
+    patient.age || "--";
+
+document.getElementById("patientGender").textContent =
+    patient.gender || "Not recorded";
+
+document.getElementById("visionAid").textContent =
+    patient.visionAid || "Not recorded";
+
+
+/* =====================================================
+   SYMPTOMS
+===================================================== */
+
+const symptomArray =
+    Array.isArray(symptoms.symptoms)
+        ? symptoms.symptoms
+        : [];
+
+
+const symptomContainer =
+    document.getElementById("symptomsList");
+
+
+if(symptomArray.length === 0){
+
+    symptomContainer.innerHTML =
+        '<span class="symptom-tag">No symptoms recorded</span>';
+
+}else{
+
+    symptomContainer.innerHTML =
+        symptomArray
+            .map(
+                item =>
+                    `<span class="symptom-tag">${item}</span>`
+            )
+            .join("");
+
+}
+
+
+document.getElementById("affectedEye").textContent =
+    symptoms.affectedEye || "Not specified";
+
+document.getElementById("symptomDuration").textContent =
+    symptoms.duration || "Not specified";
+
+document.getElementById("symptomSeverity").textContent =
+    symptoms.severity || "Not specified";
+
+
+/* =====================================================
+   CAPTURE
+===================================================== */
+
+document.getElementById("leftEye").textContent =
+    capture.leftCaptured
+        ? "Captured"
+        : "Not captured";
+
+
+document.getElementById("rightEye").textContent =
+    capture.rightCaptured
+        ? "Captured"
+        : "Not captured";
+
+
+/* =====================================================
+   COLOUR VISION
+===================================================== */
+
+let colourTotal =
+    colour.totalPlates ||
+    colour.total ||
+    0;
+
+
+let colourCompleted =
+    Array.isArray(colour.responses)
+        ? colour.responses.length
+        : (
+            Array.isArray(colour.answers)
+                ? colour.answers.length
+                : 0
+        );
+
+
+document.getElementById("colourCompleted").textContent =
+    colourCompleted || "--";
+
+
+document.getElementById("colourTotal").textContent =
+    colourTotal || "--";
+
+
+document.getElementById("colourStatus").textContent =
+    colour.completed
+        ? "Completed"
+        : "Not completed";
+
+
+/* =====================================================
+   NEAR VISION
+===================================================== */
+
+const nearResponses =
+    Array.isArray(near.responses)
+        ? near.responses
+        : [];
+
+
+document.getElementById("nearLevels").textContent =
+    near.completedLevels ||
+    nearResponses.length ||
+    "--";
+
+
+document.getElementById("smallestClear").textContent =
+    near.smallestClearLevel
+        ? `Level ${near.smallestClearLevel}`
+        : "Not recorded";
+
+
+let latestAccuracy =
+    "--";
+
+
+if(nearResponses.length > 0){
+
+    const latest =
+        nearResponses[
+            nearResponses.length - 1
+        ];
+
+
+    if(
+        typeof latest.accuracy === "number"
+    ){
+
+        latestAccuracy =
+            latest.accuracy + "%";
+
+    }
+
+}
+
+
+document.getElementById("latestAccuracy").textContent =
+    latestAccuracy;
+
+
+/* =====================================================
+   AI ANALYSIS & REFERRAL GUIDANCE (BACKEND INTEGRATED)
+===================================================== */
+
+async function loadAnalysisResults() {
+    let resultData = null;
+    try {
+        resultData = await EyeGuardAPI.getScreeningResult(screeningID);
+    } catch (e) {
+        console.warn("Backend result query fallback to session cache:", e);
+    }
+
+    if (!resultData) {
+        resultData = JSON.parse(sessionStorage.getItem("eyeGuardianAnalysis") || "null");
+    }
+
+    if (resultData && resultData.user_name) {
+
+        /* ── PATIENT INFO ── */
+        document.getElementById("patientName").textContent =
+            resultData.user_name || patient.fullName || "Not recorded";
+
+        document.getElementById("patientAge").textContent =
+            (resultData.age != null ? resultData.age : patient.age) || "--";
+
+        const sexRaw = resultData.sex || patient.gender || "";
+        document.getElementById("patientGender").textContent =
+            sexRaw ? sexRaw.charAt(0).toUpperCase() + sexRaw.slice(1) : "Not recorded";
+
+        // Vision Aid — backend has it, fall back to sessionStorage
+        document.getElementById("visionAid").textContent =
+            resultData.vision_aid || patient.visionAid || "Not recorded";
+
+        // Screening date from backend created_at
+        if (resultData.created_at) {
+            const d = new Date(resultData.created_at);
+            if (!isNaN(d)) {
+                document.getElementById("reportDate").textContent = d.toLocaleDateString();
+            }
+        }
+
+        /* ── SYMPTOMS LIST ── */
+        const backendSymptoms = Array.isArray(resultData.symptoms) ? resultData.symptoms : [];
+        if (backendSymptoms.length > 0) {
+            document.getElementById("symptomsList").innerHTML =
+                backendSymptoms.map(item => `<span class="symptom-tag">${item}</span>`).join("");
+        }
+
+        /* ── SYMPTOM DETAILS ── */
+        if (resultData.affected_eye) {
+            document.getElementById("affectedEye").textContent = resultData.affected_eye;
+        }
+        if (resultData.symptom_duration) {
+            document.getElementById("symptomDuration").textContent = resultData.symptom_duration;
+        }
+        if (resultData.symptom_severity) {
+            document.getElementById("symptomSeverity").textContent = resultData.symptom_severity;
+        }
+
+        /* ── EYE IMAGE CAPTURE ── */
+        const iq = resultData.image_quality || {};
+        if (iq.left !== undefined) {
+            document.getElementById("leftEye").textContent =
+                iq.left.ok ? "✓ Captured (Quality OK)" : "⚠ Captured (Low Quality)";
+        }
+        if (iq.right !== undefined) {
+            document.getElementById("rightEye").textContent =
+                iq.right.ok ? "✓ Captured (Quality OK)" : "⚠ Captured (Low Quality)";
+        }
+
+        /* ── COLOUR VISION ── */
+        if (resultData.vision_tests) {
+            const cs = resultData.vision_tests.color_score;
+            const csPercent = Math.round(cs * 100);
+            document.getElementById("colourCompleted").textContent = `${csPercent}% score`;
+            document.getElementById("colourTotal").textContent = "Ishihara plates";
+            document.getElementById("colourStatus").textContent = "Completed";
+        }
+
+        /* ── NEAR VISION ── */
+        if (resultData.vision_tests) {
+            const ns = resultData.vision_tests.near_vision_score;
+            const nsPercent = Math.round(ns * 100);
+            document.getElementById("nearLevels").textContent = "Completed";
+            document.getElementById("latestAccuracy").textContent = `${nsPercent}%`;
+            // smallestClear stays from sessionStorage if available
+        }
+    }
+
+    /* ── REFERRAL / RISK / ANALYSIS ── */
+    let referralMessage =
+        "This screening does not replace a comprehensive eye examination. Routine professional eye assessment is recommended according to individual needs.";
+
+    const concerningSymptoms = [
+        "Eye pain", "Double vision", "Blurred vision", "Light sensitivity"
+    ];
+
+    // Merge backend + sessionStorage symptoms for referral logic
+    const allSymptoms = [
+        ...symptomArray,
+        ...(resultData && Array.isArray(resultData.symptoms) ? resultData.symptoms : [])
+    ];
+
+    const backendSeverity = resultData && resultData.symptom_severity;
+    const hasConcerningSymptom = allSymptoms.some(s => concerningSymptoms.includes(s));
+
+    if (symptoms.severity === "Severe" || backendSeverity === "Severe" || hasConcerningSymptom) {
+        referralMessage =
+            "One or more reported symptoms may warrant professional assessment. Please arrange evaluation by a qualified eye-care professional, especially if symptoms are severe, persistent, worsening, or associated with sudden visual change.";
+    }
+
+    if (resultData) {
+        const score = typeof resultData.overall_score === "number" ? resultData.overall_score : 85;
+        const risk = resultData.overall_risk || "low";
+
+        document.getElementById("reportScore").textContent = `${score} / 100`;
+        const riskBadge = document.getElementById("reportRiskBadge");
+        riskBadge.textContent = risk.toUpperCase() + " RISK";
+
+        if (risk === "low") {
+            riskBadge.style.background = "rgba(85,232,168,0.15)";
+            riskBadge.style.color = "#55e8a8";
+        } else if (risk === "attention") {
+            riskBadge.style.background = "rgba(255,210,105,0.15)";
+            riskBadge.style.color = "#ffd269";
+        } else {
+            riskBadge.style.background = "rgba(255,111,127,0.15)";
+            riskBadge.style.color = "#ff6f7f";
+        }
+
+        if (resultData.analyses && resultData.analyses.length > 0) {
+            const summaryParts = resultData.analyses.map(
+                a => `${a.eye_side.toUpperCase()}: ${(a.predicted_class || "normal").toUpperCase()}`
+            );
+            document.getElementById("imageAnalysisSummary").textContent = summaryParts.join(" • ");
+        }
+
+        if (Array.isArray(resultData.guidance) && resultData.guidance.length > 0) {
+            referralMessage = resultData.guidance.join(" ");
+        }
+    }
+
+    document.getElementById("referralText").textContent = referralMessage;
+}
+
+loadAnalysisResults();
+
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+function printReport(){
+
+    window.print();
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function goBack(){
+
+    window.location.href =
+        "analysis.html";
+
+}
+
+
+function goHome(){
+
+    window.location.href =
+        "index.html";
+
+}
+
+</script>
+
+
+</body>
+</html>

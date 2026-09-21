@@ -12,8 +12,10 @@ from app.database import get_db
 from app.models import Screening, EyeImage, VisionTest, Analysis
 from app.schemas import (
     ScreeningCreate,
+    ScreeningUpdate,
     ScreeningResponse,
     ScreeningStatusResponse,
+    ScreeningListItem,
     ImageQualityStatus,
     ImageUploadResponse,
     VisionTestCreate,
@@ -36,6 +38,45 @@ DEVICE_EYE_MAP = {
     "LEFT_CAM_01": "left",
     "RIGHT_CAM_01": "right"
 }
+
+@router.get("", response_model=List[ScreeningListItem])
+def list_screenings(limit: int = 50, db: Session = Depends(get_db)):
+    """
+    Retrieve historical screening records ordered by creation date descending.
+    """
+    screenings = db.query(Screening).order_by(Screening.created_at.desc()).limit(limit).all()
+    results = []
+    for s in screenings:
+        images_count = len(s.images)
+        has_vt = s.vision_test is not None
+        risk = None
+        score = None
+        if s.analyses:
+            # If analyses exist, calculate or retrieve risk
+            highest_risk = "low"
+            for a in s.analyses:
+                if a.risk_level == "attention":
+                    highest_risk = "attention"
+                    break
+            risk = highest_risk
+            score = 85 if risk == "low" else 45
+
+        results.append(
+            ScreeningListItem(
+                screening_id=s.screening_id,
+                user_name=s.user_name,
+                age=s.age,
+                sex=s.sex,
+                symptoms=s.symptoms or [],
+                status=s.status,
+                created_at=s.created_at,
+                images_count=images_count,
+                has_vision_test=has_vt,
+                overall_risk=risk,
+                overall_score=score
+            )
+        )
+    return results
 
 @router.post("", response_model=ScreeningResponse, status_code=status.HTTP_201_CREATED)
 def create_screening(data: ScreeningCreate, db: Session = Depends(get_db)):
@@ -97,6 +138,71 @@ def get_screening_status(screening_id: str, db: Session = Depends(get_db)):
         screening_id=screening.screening_id,
         status=screening.status,
         created_at=screening.created_at,
+        user_name=screening.user_name,
+        age=screening.age,
+        sex=screening.sex,
+        symptoms=screening.symptoms or [],
+        images=image_statuses
+    )
+
+
+@router.patch("/{screening_id}", response_model=ScreeningStatusResponse)
+def update_screening(
+    screening_id: str,
+    data: ScreeningUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Update screening details such as patient symptoms, age, or demographics.
+    """
+    screening = db.query(Screening).filter(Screening.screening_id == screening_id).first()
+    if not screening:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Screening '{screening_id}' not found."
+        )
+
+    if data.user_name is not None:
+        screening.user_name = data.user_name
+    if data.age is not None:
+        screening.age = data.age
+    if data.sex is not None:
+        screening.sex = data.sex
+    if data.symptoms is not None:
+        screening.symptoms = data.symptoms
+    if data.affected_eye is not None:
+        screening.affected_eye = data.affected_eye
+    if data.symptom_duration is not None:
+        screening.symptom_duration = data.symptom_duration
+    if data.symptom_severity is not None:
+        screening.symptom_severity = data.symptom_severity
+    if data.symptom_notes is not None:
+        screening.symptom_notes = data.symptom_notes
+    if data.vision_aid is not None:
+        screening.vision_aid = data.vision_aid
+
+    db.commit()
+    db.refresh(screening)
+
+    images = db.query(EyeImage).filter(EyeImage.screening_id == screening_id).all()
+    image_statuses = [
+        ImageQualityStatus(
+            eye_side=img.eye_side,
+            device_id=img.device_id,
+            quality_ok=img.quality_ok,
+            quality_score=img.quality_score
+        )
+        for img in images
+    ]
+
+    return ScreeningStatusResponse(
+        screening_id=screening.screening_id,
+        status=screening.status,
+        created_at=screening.created_at,
+        user_name=screening.user_name,
+        age=screening.age,
+        sex=screening.sex,
+        symptoms=screening.symptoms or [],
         images=image_statuses
     )
 
@@ -440,5 +546,32 @@ def get_screening_result(screening_id: str, db: Session = Depends(get_db)):
         analyses=analyses_objs,
         vision_tests=vt_summary,
         guidance=scored["guidance"],
-        disclaimer=scored["disclaimer"]
+        disclaimer=scored["disclaimer"],
+        user_name=screening.user_name,
+        age=screening.age,
+        sex=screening.sex,
+        symptoms=screening.symptoms or [],
+        created_at=screening.created_at,
+        status=screening.status,
+        affected_eye=screening.affected_eye,
+        symptom_duration=screening.symptom_duration,
+        symptom_severity=screening.symptom_severity,
+        symptom_notes=screening.symptom_notes,
+        vision_aid=screening.vision_aid
     )
+
+
+@router.delete("/{screening_id}", status_code=status.HTTP_200_OK)
+def delete_screening(screening_id: str, db: Session = Depends(get_db)):
+    """
+    Delete a screening record and associated assets.
+    """
+    screening = db.query(Screening).filter(Screening.screening_id == screening_id).first()
+    if not screening:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Screening '{screening_id}' not found."
+        )
+    db.delete(screening)
+    db.commit()
+    return {"status": "deleted", "screening_id": screening_id}

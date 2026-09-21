@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Patient Registration | EyeGUARDIAN Vision</title>
+<script src="js/api.js"></script>
+
+<style>
+
+/* =========================================================
+   EYEGUARDIAN VISION — PATIENT REGISTRATION
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --panel:#081624;
+    --panel2:#0b1c2c;
+    --cyan:#27e4f2;
+    --cyan2:#6ff5f0;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff6f7f;
+    --white:#f4fcff;
+    --muted:#71899a;
+    --border:rgba(124,211,232,.10);
+}
+
+body{
+    min-height:100vh;
+    font-family:"Segoe UI",Arial,sans-serif;
+    color:var(--white);
+
+    background:
+        radial-gradient(circle at 75% 5%,rgba(27,201,226,.10),transparent 27%),
+        radial-gradient(circle at 92% 60%,rgba(102,76,255,.07),transparent 30%),
+        var(--bg);
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(rgba(74,210,230,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(74,210,230,.025) 1px,transparent 1px);
+
+    background-size:55px 55px;
+
+    mask-image:
+        linear-gradient(to bottom,black,transparent 90%);
+}
+
+
+/* =========================================================
+   TOP HEADER
+========================================================= */
+
+.topbar{
+    height:76px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 45px;
+
+    border-bottom:1px solid rgba(71,206,226,.08);
+
+    background:rgba(4,13,23,.78);
+    backdrop-filter:blur(18px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:43px;
+    height:43px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(59,230,244,.15),
+            rgba(12,31,48,.95) 55%,
+            rgba(5,16,28,.98)
+        );
+
+    border:1px solid rgba(68,221,238,.22);
+}
+
+.guardian-logo{
+    width:30px;
+    height:30px;
+}
+
+.logo-eye{
+    fill:rgba(39,228,242,.035);
+    stroke:#54ddea;
+    stroke-width:2;
+}
+
+.logo-iris{
+    fill:none;
+    stroke:#69eff1;
+    stroke-width:2;
+}
+
+.logo-core{
+    fill:#d9ffff;
+}
+
+.logo-node{
+    fill:#55e8a8;
+}
+
+.logo-connect{
+    fill:none;
+    stroke:#398fa4;
+    stroke-width:1.3;
+}
+
+.brand-name{
+    font-size:16px;
+    font-weight:700;
+}
+
+.brand-name span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+    margin-top:2px;
+    color:#506c7e;
+    font-size:8px;
+    letter-spacing:1.6px;
+}
+
+.header-right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.status-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:8px 12px;
+
+    border-radius:10px;
+
+    background:rgba(85,232,168,.045);
+    border:1px solid rgba(85,232,168,.10);
+
+    color:#72dfaf;
+    font-size:9px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+    background:var(--green);
+
+    box-shadow:0 0 8px rgba(85,232,168,.7);
+}
+
+.exit-button{
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.025);
+
+    color:#7893a4;
+
+    padding:8px 13px;
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:34px 35px 50px;
+}
+
+
+/* =========================================================
+   INTRODUCTION
+========================================================= */
+
+.page-intro{
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    align-items:flex-end;
+
+    margin-bottom:27px;
+}
+
+.eyebrow{
+    color:var(--cyan);
+
+    font-size:8px;
+    letter-spacing:2px;
+    font-weight:700;
+
+    margin-bottom:7px;
+}
+
+.page-intro h1{
+    font-size:32px;
+    font-weight:600;
+    letter-spacing:-.7px;
+}
+
+.page-intro h1 span{
+    color:var(--cyan);
+}
+
+.page-intro p{
+    margin-top:7px;
+
+    max-width:650px;
+
+    color:#698294;
+    font-size:11px;
+    line-height:1.6;
+}
+
+.session-number{
+    text-align:right;
+}
+
+.session-number small{
+    display:block;
+
+    color:#4f697b;
+    font-size:8px;
+    letter-spacing:1.2px;
+}
+
+.session-number strong{
+    display:block;
+
+    margin-top:4px;
+
+    color:#a8c5d3;
+    font-size:12px;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-card{
+    padding:19px 25px;
+
+    margin-bottom:20px;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10,27,44,.82),
+            rgba(5,15,27,.90)
+        );
+
+    border:1px solid var(--border);
+}
+
+.progress{
+    position:relative;
+
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+}
+
+.progress::before{
+    content:"";
+
+    position:absolute;
+
+    top:17px;
+    left:8%;
+    right:8%;
+
+    height:1px;
+
+    background:rgba(76,145,161,.18);
+}
+
+.progress-step{
+    position:relative;
+    z-index:2;
+
+    text-align:center;
+}
+
+.progress-circle{
+    width:35px;
+    height:35px;
+
+    margin:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#071521;
+
+    border:1px solid rgba(86,149,165,.20);
+
+    color:#587384;
+
+    font-size:9px;
+}
+
+.progress-step.active .progress-circle{
+    color:#031115;
+
+    background:linear-gradient(135deg,#27e4f2,#55e8a8);
+
+    border:none;
+
+    box-shadow:0 0 18px rgba(39,228,242,.16);
+}
+
+.progress-step span{
+    display:block;
+
+    margin-top:7px;
+
+    color:#4f697a;
+
+    font-size:7px;
+    letter-spacing:.8px;
+}
+
+.progress-step.active span{
+    color:#82dce5;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.content-grid{
+    display:grid;
+    grid-template-columns:1fr 310px;
+    gap:18px;
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,28,46,.91),
+            rgba(6,16,28,.95)
+        );
+
+    border:1px solid var(--border);
+
+    border-radius:19px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.13);
+}
+
+.form-card{
+    padding:25px;
+}
+
+.section-heading{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    margin-bottom:20px;
+}
+
+.section-icon{
+    width:39px;
+    height:39px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:rgba(39,228,242,.07);
+    border:1px solid rgba(39,228,242,.09);
+
+    color:var(--cyan);
+}
+
+.section-heading h2{
+    font-size:14px;
+    font-weight:600;
+}
+
+.section-heading p{
+    margin-top:3px;
+
+    color:#5d7688;
+    font-size:9px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group.full{
+    grid-column:1 / -1;
+}
+
+label{
+    color:#7892a4;
+
+    font-size:9px;
+    letter-spacing:.4px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+
+    padding:12px 13px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(111,183,202,.10);
+
+    outline:none;
+
+    background:rgba(2,11,20,.50);
+
+    color:#dff7fb;
+
+    font-family:inherit;
+    font-size:11px;
+
+    transition:.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:rgba(39,228,242,.42);
+
+    box-shadow:
+        0 0 0 3px rgba(39,228,242,.035);
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#3f596a;
+}
+
+select option{
+    background:#071521;
+}
+
+textarea{
+    min-height:80px;
+    resize:vertical;
+}
+
+
+/* divider */
+
+.divider{
+    height:1px;
+
+    margin:26px 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(97,172,191,.13),
+            transparent
+        );
+}
+
+
+/* =========================================================
+   CHOICE BUTTONS
+========================================================= */
+
+.question{
+    margin-bottom:17px;
+}
+
+.question-title{
+    color:#839dac;
+    font-size:10px;
+    margin-bottom:9px;
+}
+
+.choice-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.choice{
+    position:relative;
+}
+
+.choice input{
+    position:absolute;
+    opacity:0;
+}
+
+.choice label{
+    display:block;
+
+    padding:9px 15px;
+
+    border-radius:9px;
+
+    background:rgba(255,255,255,.025);
+
+    border:1px solid rgba(255,255,255,.06);
+
+    color:#708a9b;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.choice input:checked + label{
+    color:#dffcff;
+
+    border-color:rgba(39,228,242,.30);
+
+    background:rgba(39,228,242,.08);
+}
+
+
+/* =========================================================
+   SIDE PANEL
+========================================================= */
+
+.side-column{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.session-card{
+    padding:20px;
+}
+
+.card-title{
+    color:#c8dde6;
+    font-size:12px;
+    font-weight:600;
+
+    margin-bottom:15px;
+}
+
+.session-id{
+    padding:15px;
+
+    border-radius:12px;
+
+    background:
+        radial-gradient(
+            circle at right top,
+            rgba(39,228,242,.09),
+            transparent 50%
+        ),
+        rgba(255,255,255,.022);
+
+    border:1px solid rgba(39,228,242,.08);
+}
+
+.session-id span{
+    display:block;
+
+    color:#526d7f;
+
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.session-id strong{
+    display:block;
+
+    margin-top:6px;
+
+    color:var(--cyan);
+    font-size:15px;
+    letter-spacing:1px;
+}
+
+.info-row{
+    display:flex;
+    justify-content:space-between;
+
+    padding:11px 2px;
+
+    border-bottom:1px solid rgba(255,255,255,.035);
+
+    font-size:9px;
+}
+
+.info-row span{
+    color:#526d7e;
+}
+
+.info-row strong{
+    color:#9bb2bf;
+    font-weight:500;
+}
+
+.ready{
+    color:var(--green)!important;
+}
+
+
+/* PRIVACY */
+
+.privacy-card{
+    padding:18px;
+}
+
+.privacy-icon{
+    font-size:19px;
+    margin-bottom:9px;
+}
+
+.privacy-card h3{
+    font-size:11px;
+    margin-bottom:6px;
+}
+
+.privacy-card p{
+    color:#5e7788;
+    font-size:8px;
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   ACTION BAR
+========================================================= */
+
+.action-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:18px;
+
+    padding:17px 20px;
+
+    border-radius:16px;
+
+    background:rgba(7,20,34,.75);
+
+    border:1px solid rgba(99,185,205,.08);
+}
+
+.back-button{
+    padding:11px 17px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    background:transparent;
+
+    color:#708999;
+
+    cursor:pointer;
+}
+
+.continue-button{
+    padding:12px 22px;
+
+    border:none;
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #20cbdc,
+            #4ad7bd
+        );
+
+    color:#031216;
+
+    font-size:10px;
+    font-weight:750;
+    letter-spacing:.4px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 7px 24px rgba(32,203,220,.14);
+
+    transition:.2s;
+}
+
+.continue-button:hover{
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 10px 30px rgba(32,203,220,.23);
+}
+
+.required-note{
+    color:#4f697b;
+    font-size:8px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+    .content-grid{
+        grid-template-columns:1fr;
+    }
+
+    .side-column{
+        order:-1;
+    }
+}
+
+@media(max-width:650px){
+
+    .topbar{
+        padding:0 20px;
+    }
+
+    .container{
+        padding:25px 18px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+
+    .progress{
+        grid-template-columns:repeat(3,1fr);
+        gap:17px;
+    }
+
+    .progress::before{
+        display:none;
+    }
+
+    .page-intro{
+        display:block;
+    }
+
+    .session-number{
+        text-align:left;
+        margin-top:15px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+
+            <svg class="guardian-logo" viewBox="0 0 64 64">
+
+                <path
+                    d="M7 32 C14 19 22 14 32 14 C42 14 50 19 57 32 C50 45 42 50 32 50 C22 50 14 45 7 32Z"
+                    class="logo-eye"
+                />
+
+                <circle cx="32" cy="32" r="10" class="logo-iris"/>
+                <circle cx="32" cy="32" r="4" class="logo-core"/>
+
+                <circle cx="32" cy="14" r="1.8" class="logo-node"/>
+                <circle cx="50" cy="32" r="1.8" class="logo-node"/>
+                <circle cx="32" cy="50" r="1.8" class="logo-node"/>
+                <circle cx="14" cy="32" r="1.8" class="logo-node"/>
+
+                <path
+                    d="M32 14 V20 M50 32 H44 M32 50 V44 M14 32 H20"
+                    class="logo-connect"
+                />
+
+            </svg>
+
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                Eye<span>GUARDIAN</span> Vision
+            </div>
+
+            <div class="brand-sub">
+                SMART EYECARE SCREENING
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="status-pill">
+            <span class="dot"></span>
+            SYSTEM READY
+        </div>
+
+        <button class="exit-button" onclick="goHome()">
+            × Exit Screening
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+====================================================== -->
+
+<main class="container">
+
+
+<!-- INTRO -->
+
+<section class="page-intro">
+
+    <div>
+
+        <div class="eyebrow">
+            SCREENING SESSION / STEP 01
+        </div>
+
+        <h1>
+            Patient <span>Registration</span>
+        </h1>
+
+        <p>
+            Create a screening profile before beginning the
+            EyeGUARDIAN Vision assessment. The information entered
+            here will remain connected with this screening session.
+        </p>
+
+    </div>
+
+
+    <div class="session-number">
+
+        <small>CURRENT STAGE</small>
+
+        <strong>01 / REGISTRATION</strong>
+
+    </div>
+
+</section>
+
+
+
+<!-- PROGRESS -->
+
+<section class="progress-card">
+
+    <div class="progress">
+
+        <div class="progress-step active">
+            <div class="progress-circle">01</div>
+            <span>REGISTER</span>
+        </div>
+
+        <div class="progress-step">
+            <div class="progress-circle">02</div>
+            <span>SYMPTOMS</span>
+        </div>
+
+        <div class="progress-step">
+            <div class="progress-circle">03</div>
+            <span>CAPTURE</span>
+        </div>
+
+        <div class="progress-step">
+            <div class="progress-circle">04</div>
+            <span>VISION TESTS</span>
+        </div>
+
+        <div class="progress-step">
+            <div class="progress-circle">05</div>
+            <span>ANALYSIS</span>
+        </div>
+
+        <div class="progress-step">
+            <div class="progress-circle">06</div>
+            <span>REPORT</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<div class="content-grid">
+
+
+<!-- =====================================================
+     REGISTRATION FORM
+====================================================== -->
+
+<section class="card form-card">
+
+<form id="patientForm">
+
+
+<!-- PERSONAL DETAILS -->
+
+<div class="section-heading">
+
+    <div class="section-icon">
+        ◉
+    </div>
+
+    <div>
+        <h2>Personal Information</h2>
+        <p>Basic information for this screening session</p>
+    </div>
+
+</div>
+
+
+<div class="form-grid">
+
+    <div class="form-group full">
+
+        <label for="fullName">
+            FULL NAME *
+        </label>
+
+        <input
+            id="fullName"
+            type="text"
+            placeholder="Enter patient's full name"
+            required
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label for="age">
+            AGE *
+        </label>
+
+        <input
+            id="age"
+            type="number"
+            min="1"
+            max="120"
+            placeholder="Age"
+            required
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label for="gender">
+            GENDER
+        </label>
+
+        <select id="gender">
+
+            <option value="">
+                Select
+            </option>
+
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other / Prefer not to say</option>
+
+        </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label for="dob">
+            DATE OF BIRTH
+        </label>
+
+        <input
+            id="dob"
+            type="date"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label for="contact">
+            CONTACT NUMBER
+        </label>
+
+        <input
+            id="contact"
+            type="tel"
+            placeholder="Optional"
+        >
+
+    </div>
+
+</div>
+
+
+
+<div class="divider"></div>
+
+
+
+<!-- EYE HISTORY -->
+
+<div class="section-heading">
+
+    <div class="section-icon">
+        👁
+    </div>
+
+    <div>
+        <h2>Eye Health History</h2>
+        <p>Previous eye-care and vision information</p>
+    </div>
+
+</div>
+
+
+
+<div class="question">
+
+    <div class="question-title">
+        Have you had an eye examination before?
+    </div>
+
+    <div class="choice-row">
+
+        <div class="choice">
+
+            <input
+                type="radio"
+                name="previousExam"
+                id="examYes"
+                value="Yes"
+            >
+
+            <label for="examYes">
+                Yes
+            </label>
+
+        </div>
+
+
+        <div class="choice">
+
+            <input
+                type="radio"
+                name="previousExam"
+                id="examNo"
+                value="No"
+            >
+
+            <label for="examNo">
+                No
+            </label>
+
+        </div>
+
+
+        <div class="choice">
+
+            <input
+                type="radio"
+                name="previousExam"
+                id="examUnsure"
+                value="Not sure"
+            >
+
+            <label for="examUnsure">
+                Not sure
+            </label>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="question">
+
+    <div class="question-title">
+        Do you currently use glasses or contact lenses?
+    </div>
+
+    <div class="choice-row">
+
+        <div class="choice">
+
+            <input
+                type="radio"
+                name="visionAid"
+                id="aidYes"
+                value="Yes"
+            >
+
+            <label for="aidYes">
+                Yes
+            </label>
+
+        </div>
+
+
+        <div class="choice">
+
+            <input
+                type="radio"
+                name="visionAid"
+                id="aidNo"
+                value="No"
+            >
+
+            <label for="aidNo">
+                No
+            </label>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="form-group full">
+
+    <label for="history">
+        PREVIOUS EYE CONDITIONS / EXAMINATIONS
+    </label>
+
+    <textarea
+        id="history"
+        placeholder="Enter any known eye conditions, previous examinations, treatments or relevant information..."
+    ></textarea>
+
+</div>
+
+
+</form>
+
+</section>
+
+
+
+<!-- =====================================================
+     RIGHT PANEL
+====================================================== -->
+
+<aside class="side-column">
+
+
+<div class="card session-card">
+
+    <div class="card-title">
+        Screening Session
+    </div>
+
+
+    <div class="session-id">
+
+        <span>SCREENING ID</span>
+
+        <strong id="screeningID">
+            GENERATING...
+        </strong>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>Stage</span>
+
+        <strong>
+            Registration
+        </strong>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>Progress</span>
+
+        <strong>
+            01 / 06
+        </strong>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>EyeGUARDIAN Device</span>
+
+        <strong class="ready">
+            Ready
+        </strong>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>Patient Profile</span>
+
+        <strong id="profileStatus">
+            Incomplete
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<div class="card privacy-card">
+
+    <div class="privacy-icon">
+        ◈
+    </div>
+
+    <h3>
+        Screening Data
+    </h3>
+
+    <p>
+        This prototype stores the current screening information
+        locally in the browser. Later, the EyeGUARDIAN database
+        will manage screening records through the secure backend.
+    </p>
+
+</div>
+
+
+<div class="card privacy-card">
+
+    <div class="privacy-icon">
+        ✦
+    </div>
+
+    <h3>
+        Next Stage
+    </h3>
+
+    <p>
+        After registration, EyeGUARDIAN will guide the user
+        through symptom assessment before beginning eye-image
+        capture and the vision screening modules.
+    </p>
+
+</div>
+
+
+</aside>
+
+
+</div>
+
+
+
+<!-- ACTION BAR -->
+
+<div class="action-bar">
+
+    <button
+        class="back-button"
+        onclick="goHome()"
+    >
+        ← Back to Dashboard
+    </button>
+
+
+    <div class="required-note">
+        * Required information
+    </div>
+
+
+    <button
+        class="continue-button"
+        onclick="savePatient()"
+    >
+        CONTINUE TO SYMPTOMS &nbsp; →
+    </button>
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+/* =========================================================
+   GENERATE SCREENING ID
+========================================================= */
+
+function generateScreeningID(){
+
+    const now = new Date();
+
+    const year =
+        String(now.getFullYear()).slice(-2);
+
+    const month =
+        String(now.getMonth() + 1).padStart(2,"0");
+
+    const day =
+        String(now.getDate()).padStart(2,"0");
+
+    const random =
+        Math.floor(1000 + Math.random() * 9000);
+
+    return `EGV-${year}${month}${day}-${random}`;
+}
+
+
+/* Keep the same ID if page refreshes */
+
+let screeningID =
+    sessionStorage.getItem("screeningID");
+
+if(!screeningID){
+
+    screeningID =
+        generateScreeningID();
+
+    sessionStorage.setItem(
+        "screeningID",
+        screeningID
+    );
+}
+
+document.getElementById(
+    "screeningID"
+).textContent = screeningID;
+
+
+
+/* =========================================================
+   PROFILE STATUS
+========================================================= */
+
+const fullName =
+    document.getElementById("fullName");
+
+const age =
+    document.getElementById("age");
+
+
+function updateProfileStatus(){
+
+    if(
+        fullName.value.trim() !== "" &&
+        age.value.trim() !== ""
+    ){
+
+        document.getElementById(
+            "profileStatus"
+        ).textContent = "Ready";
+
+        document.getElementById(
+            "profileStatus"
+        ).style.color = "#55e8a8";
+
+    }else{
+
+        document.getElementById(
+            "profileStatus"
+        ).textContent = "Incomplete";
+
+        document.getElementById(
+            "profileStatus"
+        ).style.color = "";
+
+    }
+
+}
+
+
+fullName.addEventListener(
+    "input",
+    updateProfileStatus
+);
+
+age.addEventListener(
+    "input",
+    updateProfileStatus
+);
+
+
+
+/* =========================================================
+   SAVE PATIENT
+========================================================= */
+
+async function savePatient(){
+
+    const form =
+        document.getElementById("patientForm");
+
+    if(!form.reportValidity()){
+        return;
+    }
+
+    const submitBtn = document.querySelector(".save-button");
+    if(submitBtn){
+        submitBtn.disabled = true;
+        submitBtn.textContent = "INITIALIZING SESSION...";
+    }
+
+    const previousExam =
+        document.querySelector(
+            'input[name="previousExam"]:checked'
+        )?.value || "";
+
+    const visionAid =
+        document.querySelector(
+            'input[name="visionAid"]:checked'
+        )?.value || "";
+
+    const patientData = {
+        fullName:
+            document.getElementById(
+                "fullName"
+            ).value.trim(),
+
+        age:
+            document.getElementById(
+                "age"
+            ).value,
+
+        gender:
+            document.getElementById(
+                "gender"
+            ).value,
+
+        dob:
+            document.getElementById(
+                "dob"
+            ).value,
+
+        contact:
+            document.getElementById(
+                "contact"
+            ).value.trim(),
+
+        previousExam:
+            previousExam,
+
+        visionAid:
+            visionAid,
+
+        eyeHistory:
+            document.getElementById(
+                "history"
+            ).value.trim()
+    };
+
+    // Call backend to create screening session
+    try {
+        const resp = await EyeGuardAPI.createScreening(patientData);
+        if (resp && resp.screening_id) {
+            screeningID = resp.screening_id;
+            sessionStorage.setItem("screeningID", screeningID);
+            patientData.screeningID = screeningID;
+
+            // Persist vision_aid (and other extras) via PATCH
+            if (visionAid) {
+                await EyeGuardAPI.patchScreening(screeningID, { vision_aid: visionAid });
+            }
+        }
+    } catch (e) {
+        console.warn("Could not create backend screening, using local ID:", e);
+        patientData.screeningID = screeningID;
+    }
+
+    sessionStorage.setItem(
+        "eyeGuardianPatient",
+        JSON.stringify(patientData)
+    );
+
+    window.location.href =
+        "symptoms.html";
+}
+
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+function goHome(){
+
+    window.location.href =
+        "index.html";
+}
+
+</script>
+
+
+</body>
+</html>

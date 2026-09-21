@@ -38,22 +38,14 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS Configuration
-# Configured with FRONTEND_ORIGIN and common local development ports
-origins = [
-    settings.FRONTEND_ORIGIN,
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-]
-# Remove duplicates preserving order
-origins = list(dict.fromkeys(origins))
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
+# CORS Configuration - Allow all origins for prototype frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -61,6 +53,16 @@ app.add_middleware(
 # Register Routers
 app.include_router(health.router)
 app.include_router(screenings.router)
+
+# Mount static files for uploaded screening images
+if settings.SCREENINGS_DATA_DIR.exists():
+    app.mount("/data/screenings", StaticFiles(directory=str(settings.SCREENINGS_DATA_DIR)), name="screenings_data")
+
+# Mount frontend static application (now lives inside the backend repo at frontend/)
+frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+if frontend_dir.exists():
+    logger.info(f"Mounting frontend directory: {frontend_dir}")
+    app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
 
 # Custom Exception Handlers
 @app.exception_handler(RequestValidationError)

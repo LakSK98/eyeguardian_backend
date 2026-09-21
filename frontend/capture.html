@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eye Capture | EyeGUARDIAN Vision</title>
+<script src="js/api.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --panel:#081624;
+    --cyan:#27e4f2;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff7183;
+    --white:#f4fcff;
+    --muted:#748d9e;
+    --border:rgba(124,211,232,.10);
+}
+
+body{
+    min-height:100vh;
+    font-family:"Segoe UI",Arial,sans-serif;
+    color:var(--white);
+    background:
+        radial-gradient(circle at 78% 5%,rgba(27,201,226,.10),transparent 27%),
+        radial-gradient(circle at 93% 65%,rgba(102,76,255,.07),transparent 30%),
+        var(--bg);
+}
+
+/* HEADER */
+.topbar{
+    height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 45px;
+    border-bottom:1px solid rgba(71,206,226,.08);
+    background:rgba(4,13,23,.78);
+    backdrop-filter:blur(18px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:43px;
+    height:43px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+    background:radial-gradient(circle at 35% 25%,rgba(59,230,244,.15),rgba(12,31,48,.95) 55%,rgba(5,16,28,.98));
+    border:1px solid rgba(68,221,238,.22);
+}
+
+.brand-logo span{
+    font-size:24px;
+    color:var(--cyan);
+}
+
+.brand-name{
+    font-size:18px;
+    font-weight:700;
+}
+
+.brand-name span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+    color:#506c7e;
+    font-size:9px;
+    letter-spacing:1.5px;
+}
+
+.header-right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.status-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 12px;
+    border-radius:10px;
+    background:rgba(85,232,168,.045);
+    border:1px solid rgba(85,232,168,.10);
+    color:#72dfaf;
+    font-size:10px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 8px rgba(85,232,168,.7);
+}
+
+.exit-button{
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.025);
+    color:#7893a4;
+    padding:8px 13px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* MAIN */
+.container{
+    max-width:1320px;
+    margin:auto;
+    padding:34px 35px 50px;
+}
+
+.page-intro{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:30px;
+    margin-bottom:26px;
+}
+
+.eyebrow{
+    color:var(--cyan);
+    font-size:10px;
+    letter-spacing:2px;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+.page-intro h1{
+    font-size:38px;
+    font-weight:650;
+}
+
+.page-intro h1 span{
+    color:var(--cyan);
+}
+
+.page-intro p{
+    margin-top:7px;
+    max-width:720px;
+    color:#8099aa;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.stage{
+    text-align:right;
+}
+
+.stage small{
+    display:block;
+    color:#4f697b;
+    font-size:9px;
+}
+
+.stage strong{
+    display:block;
+    margin-top:4px;
+    font-size:14px;
+}
+
+/* PROGRESS */
+.progress-card{
+    padding:19px 25px;
+    margin-bottom:20px;
+    border-radius:17px;
+    background:linear-gradient(145deg,rgba(10,27,44,.82),rgba(5,15,27,.90));
+    border:1px solid var(--border);
+}
+
+.progress{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    position:relative;
+}
+
+.progress::before{
+    content:"";
+    position:absolute;
+    top:18px;
+    left:8%;
+    right:8%;
+    height:1px;
+    background:rgba(76,145,161,.18);
+}
+
+.progress-step{
+    position:relative;
+    z-index:2;
+    text-align:center;
+}
+
+.progress-circle{
+    width:38px;
+    height:38px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#071521;
+    border:1px solid rgba(86,149,165,.20);
+    color:#587384;
+    font-size:10px;
+}
+
+.progress-step.complete .progress-circle{
+    color:#6edeb1;
+    border-color:rgba(85,232,168,.22);
+    background:rgba(85,232,168,.055);
+}
+
+.progress-step.active .progress-circle{
+    color:#031115;
+    background:linear-gradient(135deg,#27e4f2,#55e8a8);
+    border:none;
+    box-shadow:0 0 18px rgba(39,228,242,.16);
+}
+
+.progress-step span{
+    display:block;
+    margin-top:7px;
+    color:#4f697a;
+    font-size:9px;
+    font-weight:600;
+}
+
+.progress-step.active span{
+    color:#82dce5;
+}
+
+/* PATIENT BAR */
+.card{
+    background:linear-gradient(145deg,rgba(11,28,46,.91),rgba(6,16,28,.95));
+    border:1px solid var(--border);
+    border-radius:19px;
+    box-shadow:0 15px 40px rgba(0,0,0,.13);
+}
+
+.patient-bar{
+    display:grid;
+    grid-template-columns:1.5fr 1fr .6fr .6fr;
+    overflow:hidden;
+    margin-bottom:17px;
+}
+
+.patient-data{
+    padding:15px 17px;
+    border-right:1px solid rgba(255,255,255,.035);
+}
+
+.patient-data span{
+    display:block;
+    color:#506b7d;
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.patient-data strong{
+    display:block;
+    margin-top:4px;
+    font-size:12px;
+    color:#b7ced9;
+}
+
+.cyan{
+    color:var(--cyan)!important;
+}
+
+/* CAPTURE AREA */
+.capture-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.eye-panel{
+    padding:21px;
+}
+
+.eye-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+}
+
+.eye-header h2{
+    font-size:17px;
+}
+
+.camera-status{
+    color:var(--green);
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+.preview{
+    position:relative;
+    min-height:310px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    border-radius:17px;
+    background:
+        radial-gradient(circle,rgba(39,228,242,.12),transparent 55%),
+        #04101b;
+    border:1px solid rgba(39,228,242,.10);
+    box-shadow:inset 0 0 45px rgba(0,0,0,.45);
+}
+
+.preview::before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    border:1px solid rgba(39,228,242,.22);
+}
+
+.preview::after{
+    content:"";
+    position:absolute;
+    width:140px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+    box-shadow:0 0 10px rgba(39,228,242,.6);
+    animation:scan 3s ease-in-out infinite;
+}
+
+@keyframes scan{
+    0%,100%{transform:translateY(-80px);opacity:.2;}
+    50%{transform:translateY(80px);opacity:.8;}
+}
+
+.placeholder{
+    z-index:2;
+    text-align:center;
+    color:#5e7889;
+}
+
+.placeholder strong{
+    display:block;
+    color:#8ca6b5;
+    font-size:15px;
+    margin-bottom:6px;
+}
+
+.placeholder span{
+    font-size:10px;
+}
+
+.capture-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:13px;
+}
+
+.capture-button,
+.retake-button{
+    border:none;
+    border-radius:10px;
+    padding:12px;
+    cursor:pointer;
+    font-size:10px;
+    font-weight:700;
+}
+
+.capture-button{
+    background:linear-gradient(100deg,#20cbdc,#4ad7bd);
+    color:#031216;
+}
+
+.retake-button{
+    background:rgba(255,255,255,.025);
+    border:1px solid rgba(255,255,255,.07);
+    color:#708999;
+}
+
+.preview img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:15px;
+}
+
+.preview video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:15px;
+}
+
+.btn-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:8px;
+}
+
+.opt-btn{
+    padding:11px 9px;
+    border-radius:10px;
+    border:1px solid rgba(39,228,242,.22);
+    background:rgba(39,228,242,.06);
+    color:#74eef7;
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+    transition:all .2s;
+    text-align:center;
+}
+
+.opt-btn:hover{
+    background:rgba(39,228,242,.18);
+    color:#ffffff;
+    box-shadow:0 0 14px rgba(39,228,242,.2);
+}
+
+.opt-btn.active-cam{
+    background:rgba(255,111,127,.2);
+    border-color:#ff6f7f;
+    color:#ff9fa9;
+}
+
+/* QUALITY */
+.quality-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:13px;
+}
+
+.quality-item{
+    padding:10px;
+    border-radius:9px;
+    background:rgba(255,255,255,.022);
+    border:1px solid rgba(255,255,255,.04);
+}
+
+.quality-item span{
+    display:block;
+    color:#526d7e;
+    font-size:7px;
+    margin-bottom:4px;
+}
+
+.quality-item strong{
+    font-size:9px;
+    color:#7f97a7;
+}
+
+.good{
+    color:var(--green)!important;
+}
+
+/* CONNECTION CARD */
+.connection-panel{
+    margin-top:18px;
+    padding:21px;
+}
+
+.connection-panel h3{
+    font-size:15px;
+    margin-bottom:12px;
+}
+
+.connection-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+}
+
+.connection-item{
+    padding:13px;
+    border-radius:10px;
+    background:rgba(255,255,255,.022);
+    border:1px solid rgba(255,255,255,.04);
+}
+
+.connection-item span{
+    display:block;
+    color:#526d7e;
+    font-size:8px;
+}
+
+.connection-item strong{
+    display:block;
+    margin-top:5px;
+    color:#a9c0cc;
+    font-size:10px;
+}
+
+/* ACTION BAR */
+.action-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:18px;
+    padding:17px 20px;
+    border-radius:16px;
+    background:rgba(7,20,34,.75);
+    border:1px solid rgba(99,185,205,.08);
+}
+
+.back-button{
+    padding:11px 17px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.07);
+    background:transparent;
+    color:#708999;
+    cursor:pointer;
+}
+
+.continue-button{
+    padding:13px 24px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(100deg,#20cbdc,#4ad7bd);
+    color:#031216;
+    font-size:11px;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.action-note{
+    color:#4f697b;
+    font-size:9px;
+}
+
+@media(max-width:900px){
+    .capture-grid{
+        grid-template-columns:1fr;
+    }
+
+    .connection-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="brand">
+
+    <div class="brand-logo">
+        <span>◉</span>
+    </div>
+
+    <div>
+        <div class="brand-name">
+            Eye<span>GUARDIAN</span> Vision
+        </div>
+
+        <div class="brand-sub">
+            SMART EYECARE SCREENING
+        </div>
+    </div>
+
+</div>
+
+
+<div class="header-right">
+
+    <div class="status-pill">
+        <span class="dot"></span>
+        DUAL CAMERA SYSTEM READY
+    </div>
+
+    <button class="exit-button" onclick="goHome()">
+        × Exit Screening
+    </button>
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+
+<section class="page-intro">
+
+<div>
+
+    <div class="eyebrow">
+        SCREENING SESSION / STEP 03
+    </div>
+
+    <h1>
+        Dual Eye <span>Capture</span>
+    </h1>
+
+    <p>
+        Position the EyeGUARDIAN device correctly and capture
+        separate left-eye and right-eye images. The software will
+        later perform automatic quality checks before continuing
+        to the vision screening modules.
+    </p>
+
+</div>
+
+<div class="stage">
+    <small>CURRENT STAGE</small>
+    <strong>03 / EYE CAPTURE</strong>
+</div>
+
+</section>
+
+
+<section class="progress-card">
+
+<div class="progress">
+
+    <div class="progress-step complete">
+        <div class="progress-circle">✓</div>
+        <span>REGISTER</span>
+    </div>
+
+    <div class="progress-step complete">
+        <div class="progress-circle">✓</div>
+        <span>SYMPTOMS</span>
+    </div>
+
+    <div class="progress-step active">
+        <div class="progress-circle">03</div>
+        <span>CAPTURE</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">04</div>
+        <span>VISION TESTS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">05</div>
+        <span>ANALYSIS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">06</div>
+        <span>REPORT</span>
+    </div>
+
+</div>
+
+</section>
+
+
+<section class="card patient-bar">
+
+<div class="patient-data">
+    <span>PATIENT</span>
+    <strong id="patientName">Screening User</strong>
+</div>
+
+<div class="patient-data">
+    <span>SCREENING ID</span>
+    <strong class="cyan" id="screeningID">EGV</strong>
+</div>
+
+<div class="patient-data">
+    <span>AGE</span>
+    <strong id="patientAge">--</strong>
+</div>
+
+<div class="patient-data">
+    <span>STAGE</span>
+    <strong>03 / 06</strong>
+</div>
+
+</section>
+
+
+<section class="capture-grid">
+
+
+<div class="card eye-panel">
+
+    <div class="eye-header">
+
+        <h2>Left Eye Capture</h2>
+
+        <span class="camera-status">
+            ● CAMERA READY
+        </span>
+
+    </div>
+
+
+    <div class="preview" id="leftPreview">
+
+        <div class="placeholder">
+            <strong>LEFT EYE</strong>
+            <span>Waiting for image capture</span>
+        </div>
+
+    </div>
+
+
+    <div class="quality-grid">
+
+        <div class="quality-item">
+            <span>SHARPNESS</span>
+            <strong id="leftSharpness">Pending</strong>
+        </div>
+
+        <div class="quality-item">
+            <span>BRIGHTNESS</span>
+            <strong id="leftBrightness">Pending</strong>
+        </div>
+
+        <div class="quality-item">
+            <span>POSITION</span>
+            <strong id="leftPosition">Pending</strong>
+        </div>
+
+        <div class="quality-item">
+            <span>QUALITY</span>
+            <strong id="leftQuality">Pending</strong>
+        </div>
+
+    </div>
+
+
+    <div class="capture-actions">
+        <input type="file" id="leftFileInput" accept="image/*" style="display:none" onchange="handleFileSelected(event, 'left')">
+        <div class="btn-row">
+            <button class="opt-btn" type="button" onclick="document.getElementById('leftFileInput').click()">📁 CHOOSE FILE</button>
+            <button class="opt-btn" type="button" id="leftWebcamBtn" onclick="toggleWebcam('left')">📸 WEBCAM</button>
+        </div>
+        <div class="btn-row">
+            <button class="opt-btn" type="button" onclick="loadSampleImage('left')">🧪 SAMPLE EYE</button>
+            <button class="retake-button" type="button" onclick="resetEye('left')">RETAKE</button>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="card eye-panel">
+
+    <div class="eye-header">
+
+        <h2>Right Eye Capture</h2>
+
+        <span class="camera-status" id="rightCamStatus">
+            ● CAMERA READY
+        </span>
+
+    </div>
+
+
+    <div class="preview" id="rightPreview">
+
+        <div class="placeholder">
+            <strong>RIGHT EYE</strong>
+            <span>Waiting for image capture</span>
+        </div>
+
+    </div>
+
+
+    <div class="quality-grid">
+
+        <div class="quality-item">
+            <span>SHARPNESS</span>
+            <strong id="rightSharpness">Pending</strong>
+        </div>
+
+        <div class="quality-item">
+            <span>BRIGHTNESS</span>
+            <strong id="rightBrightness">Pending</strong>
+        </div>
+
+        <div class="quality-item">
+            <span>POSITION</span>
+            <strong id="rightPosition">Pending</strong>
+        </div>
+
+        <div class="quality-item">
+            <span>QUALITY</span>
+            <strong id="rightQuality">Pending</strong>
+        </div>
+
+    </div>
+
+
+    <div class="capture-actions">
+        <input type="file" id="rightFileInput" accept="image/*" style="display:none" onchange="handleFileSelected(event, 'right')">
+        <div class="btn-row">
+            <button class="opt-btn" type="button" onclick="document.getElementById('rightFileInput').click()">📁 CHOOSE FILE</button>
+            <button class="opt-btn" type="button" id="rightWebcamBtn" onclick="toggleWebcam('right')">📸 WEBCAM</button>
+        </div>
+        <div class="btn-row">
+            <button class="opt-btn" type="button" onclick="loadSampleImage('right')">🧪 SAMPLE EYE</button>
+            <button class="retake-button" type="button" onclick="resetEye('right')">RETAKE</button>
+        </div>
+    </div>
+
+</div>
+
+
+</section>
+
+
+
+<section class="card connection-panel">
+
+<h3>EyeGUARDIAN Device Connection</h3>
+
+<div class="connection-grid">
+
+    <div class="connection-item">
+        <span>LEFT CAMERA</span>
+        <strong class="good">READY</strong>
+    </div>
+
+    <div class="connection-item">
+        <span>RIGHT CAMERA</span>
+        <strong class="good">READY</strong>
+    </div>
+
+    <div class="connection-item">
+        <span>WIRELESS LINK</span>
+        <strong class="good">STANDBY</strong>
+    </div>
+
+    <div class="connection-item">
+        <span>IMAGE PROCESSING</span>
+        <strong>WAITING</strong>
+    </div>
+
+</div>
+
+</section>
+
+
+
+<div class="action-bar">
+
+<button
+    class="back-button"
+    onclick="goBack()"
+>
+    ← Back to Symptoms
+</button>
+
+
+<div class="action-note">
+    BOTH EYE IMAGES ARE REQUIRED BEFORE CONTINUING
+</div>
+
+
+<button
+    class="continue-button"
+    onclick="continueScreening()"
+>
+    CONTINUE TO VISION TESTS →
+</button>
+
+</div>
+
+
+</main>
+
+
+<script>
+
+/* LOAD PATIENT DETAILS */
+
+const patient =
+    JSON.parse(
+        sessionStorage.getItem("eyeGuardianPatient") || "{}"
+    );
+
+const screeningID =
+    sessionStorage.getItem("screeningID") || "EGV";
+
+
+if(patient.fullName){
+    document.getElementById("patientName").textContent =
+        patient.fullName;
+}
+
+if(patient.age){
+    document.getElementById("patientAge").textContent =
+        patient.age;
+}
+
+document.getElementById("screeningID").textContent =
+    screeningID;
+
+
+
+/* CAPTURE STATE */
+let leftCaptured = false;
+let rightCaptured = false;
+let activeStreams = { left: null, right: null };
+
+// Check if previously captured
+const prevCapture = JSON.parse(sessionStorage.getItem("eyeGuardianCapture") || "{}");
+if (prevCapture.leftCaptured) {
+    leftCaptured = true;
+    document.getElementById("leftPreview").innerHTML = `
+        <div class="placeholder"><strong class="good">✓ LEFT EYE PREVIOUSLY RECORDED</strong></div>
+    `;
+    ["leftSharpness", "leftBrightness", "leftPosition", "leftQuality"].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = "Accepted";
+        el.classList.add("good");
+    });
+}
+if (prevCapture.rightCaptured) {
+    rightCaptured = true;
+    document.getElementById("rightPreview").innerHTML = `
+        <div class="placeholder"><strong class="good">✓ RIGHT EYE PREVIOUSLY RECORDED</strong></div>
+    `;
+    ["rightSharpness", "rightBrightness", "rightPosition", "rightQuality"].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = "Accepted";
+        el.classList.add("good");
+    });
+}
+
+// Handle file selection from disk
+function handleFileSelected(event, side) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        showPreviewImage(side, e.target.result);
+        uploadAndAssess(file, side);
+    };
+    reader.readAsDataURL(file);
+}
+
+// Live Webcam Capture
+async function toggleWebcam(side) {
+    const btn = document.getElementById(side + "WebcamBtn");
+
+    if (activeStreams[side]) {
+        // Snap Photo
+        const video = document.getElementById(side + "Video");
+        if (video) {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Stop track
+            activeStreams[side].getTracks().forEach(t => t.stop());
+            activeStreams[side] = null;
+            btn.textContent = "📸 WEBCAM";
+            btn.classList.remove("active-cam");
+
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+            showPreviewImage(side, dataUrl);
+
+            canvas.toBlob(blob => {
+                uploadAndAssess(blob, side);
+            }, "image/jpeg", 0.95);
+        }
+        return;
+    }
+
+    // Start Webcam
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+        activeStreams[side] = stream;
+
+        const preview = document.getElementById(side + "Preview");
+        preview.innerHTML = `
+            <video id="${side}Video" autoplay playsinline style="width:100%; height:100%; object-fit:cover; border-radius:15px;"></video>
+            <div style="position:absolute; bottom:12px; background:rgba(0,0,0,0.7); padding:4px 12px; border-radius:20px; font-size:10px; color:#55e8a8;">
+                ● LIVE FEED — CLICK 'SNAP PHOTO'
+            </div>
+        `;
+        const video = document.getElementById(side + "Video");
+        video.srcObject = stream;
+
+        btn.textContent = "📸 SNAP PHOTO";
+        btn.classList.add("active-cam");
+    } catch (err) {
+        alert("Unable to access webcam: " + (err.message || "Permission denied"));
+    }
+}
+
+// Generate high quality sample prototype eye image
+function loadSampleImage(side) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    const ctx = canvas.getContext("2d");
+
+    // Skin background
+    ctx.fillStyle = "#cca892";
+    ctx.fillRect(0, 0, 320, 240);
+
+    // Eye opening (sclera)
+    ctx.beginPath();
+    ctx.ellipse(160, 120, 110, 55, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#edf2f5";
+    ctx.fill();
+
+    // Iris
+    ctx.beginPath();
+    ctx.arc(160, 120, 38, 0, Math.PI * 2);
+    ctx.fillStyle = side === "left" ? "#3b2a1a" : "#2f3e46";
+    ctx.fill();
+
+    // Pupil
+    ctx.beginPath();
+    ctx.arc(160, 120, 16, 0, Math.PI * 2);
+    ctx.fillStyle = "#0c0d10";
+    ctx.fill();
+
+    // Light reflection
+    ctx.beginPath();
+    ctx.arc(150, 110, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+
+    // Vascular details
+    ctx.strokeStyle = side === "left" ? "rgba(220, 80, 80, 0.25)" : "rgba(235, 60, 60, 0.45)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(70, 120);
+    ctx.lineTo(105, 125);
+    ctx.moveTo(250, 120);
+    ctx.lineTo(215, 118);
+    ctx.stroke();
+
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+    showPreviewImage(side, dataUrl);
+
+    canvas.toBlob(blob => {
+        uploadAndAssess(blob, side);
+    }, "image/jpeg", 0.95);
+}
+
+function showPreviewImage(side, src) {
+    const preview = document.getElementById(side + "Preview");
+    preview.innerHTML = `<img src="${src}" alt="${side} Eye Capture">`;
+}
+
+// Upload to backend and receive OpenCV quality metrics
+async function uploadAndAssess(blobOrFile, side) {
+    const deviceId = side === "left" ? "LEFT_CAM_01" : "RIGHT_CAM_01";
+
+    document.getElementById(side + "Sharpness").textContent = "Evaluating...";
+    document.getElementById(side + "Brightness").textContent = "Evaluating...";
+    document.getElementById(side + "Position").textContent = "Checking...";
+    document.getElementById(side + "Quality").textContent = "Evaluating...";
+
+    const res = await EyeGuardAPI.uploadEyeImage(screeningID, blobOrFile, deviceId);
+
+    if (res && res.result) {
+        const q = res.result;
+
+        const blurVal = q.blur_score ? `${Math.round(q.blur_score)} (Var)` : "Good";
+        const brightVal = q.brightness ? `${Math.round(q.brightness)} (Mean)` : "Good";
+
+        document.getElementById(side + "Sharpness").textContent = blurVal;
+        document.getElementById(side + "Brightness").textContent = brightVal;
+        document.getElementById(side + "Position").textContent = "Centered";
+        document.getElementById(side + "Quality").textContent = q.ok ? "Accepted" : "Recapture";
+
+        if (q.ok) {
+            ["Sharpness", "Brightness", "Position", "Quality"].forEach(item => {
+                const el = document.getElementById(side + item);
+                el.classList.add("good");
+                el.style.color = "";
+            });
+
+            if (side === "left") leftCaptured = true;
+            if (side === "right") rightCaptured = true;
+            saveCaptureStatus();
+        } else {
+            const qEl = document.getElementById(side + "Quality");
+            qEl.classList.remove("good");
+            qEl.style.color = "#ff6f7f";
+            alert(`OpenCV Image Quality Notice (${side.toUpperCase()} EYE):\n\n${q.reason || "Image quality below prototype threshold. Please try again."}`);
+        }
+    }
+}
+
+function resetEye(side) {
+    if (activeStreams[side]) {
+        activeStreams[side].getTracks().forEach(t => t.stop());
+        activeStreams[side] = null;
+        const btn = document.getElementById(side + "WebcamBtn");
+        if (btn) {
+            btn.textContent = "📸 WEBCAM";
+            btn.classList.remove("active-cam");
+        }
+    }
+
+    const preview = document.getElementById(side + "Preview");
+    preview.innerHTML = `
+        <div class="placeholder">
+            <strong>${side.toUpperCase()} EYE</strong>
+            <span>Waiting for image capture</span>
+        </div>
+    `;
+
+    ["Sharpness", "Brightness", "Position", "Quality"].forEach(item => {
+        const el = document.getElementById(side + item);
+        el.textContent = "Pending";
+        el.classList.remove("good");
+        el.style.color = "";
+    });
+
+    if (side === "left") leftCaptured = false;
+    if (side === "right") rightCaptured = false;
+
+    saveCaptureStatus();
+}
+
+function saveCaptureStatus() {
+    const data = {
+        leftCaptured,
+        rightCaptured
+    };
+    sessionStorage.setItem("eyeGuardianCapture", JSON.stringify(data));
+}
+
+function continueScreening() {
+    if (!leftCaptured || !rightCaptured) {
+        alert("Please capture both left and right eye images before continuing.");
+        return;
+    }
+    window.location.href = "colour-vision.html";
+}
+
+function goBack() {
+    window.location.href = "symptoms.html";
+}
+
+function goHome() {
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>

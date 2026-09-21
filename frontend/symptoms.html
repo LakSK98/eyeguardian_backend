@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Symptom Assessment | EyeGUARDIAN Vision</title>
+<script src="js/api.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --panel:#081624;
+    --cyan:#27e4f2;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff7183;
+    --white:#f4fcff;
+    --muted:#71899a;
+    --border:rgba(124,211,232,.10);
+}
+
+body{
+    min-height:100vh;
+    font-family:"Segoe UI",Arial,sans-serif;
+    color:var(--white);
+
+    background:
+        radial-gradient(circle at 78% 4%,rgba(27,201,226,.10),transparent 27%),
+        radial-gradient(circle at 94% 65%,rgba(102,76,255,.07),transparent 30%),
+        var(--bg);
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(rgba(74,210,230,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(74,210,230,.025) 1px,transparent 1px);
+
+    background-size:55px 55px;
+
+    mask-image:linear-gradient(to bottom,black,transparent 90%);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.topbar{
+    height:76px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 45px;
+
+    border-bottom:1px solid rgba(71,206,226,.08);
+
+    background:rgba(4,13,23,.78);
+    backdrop-filter:blur(18px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:43px;
+    height:43px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(59,230,244,.15),
+            rgba(12,31,48,.95) 55%,
+            rgba(5,16,28,.98)
+        );
+
+    border:1px solid rgba(68,221,238,.22);
+}
+
+.guardian-logo{
+    width:30px;
+    height:30px;
+}
+
+.logo-eye{
+    fill:rgba(39,228,242,.035);
+    stroke:#54ddea;
+    stroke-width:2;
+}
+
+.logo-iris{
+    fill:none;
+    stroke:#69eff1;
+    stroke-width:2;
+}
+
+.logo-core{
+    fill:#d9ffff;
+}
+
+.logo-node{
+    fill:#55e8a8;
+}
+
+.logo-connect{
+    fill:none;
+    stroke:#398fa4;
+    stroke-width:1.3;
+}
+
+.brand-name{
+    font-size:16px;
+    font-weight:700;
+}
+
+.brand-name span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+    margin-top:2px;
+
+    color:#506c7e;
+
+    font-size:8px;
+    letter-spacing:1.6px;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.status-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:8px 12px;
+
+    border-radius:10px;
+
+    background:rgba(85,232,168,.045);
+    border:1px solid rgba(85,232,168,.10);
+
+    color:#72dfaf;
+    font-size:9px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:var(--green);
+
+    box-shadow:0 0 8px rgba(85,232,168,.7);
+}
+
+.exit-button{
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.025);
+
+    color:#7893a4;
+
+    padding:8px 13px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.container{
+    max-width:1300px;
+
+    margin:auto;
+
+    padding:34px 35px 50px;
+}
+
+
+/* INTRO */
+
+.page-intro{
+    display:flex;
+
+    justify-content:space-between;
+    align-items:flex-end;
+
+    gap:30px;
+
+    margin-bottom:27px;
+}
+
+.eyebrow{
+    color:var(--cyan);
+
+    font-size:8px;
+    letter-spacing:2px;
+    font-weight:700;
+
+    margin-bottom:7px;
+}
+
+.page-intro h1{
+    font-size:32px;
+    font-weight:600;
+
+    letter-spacing:-.7px;
+}
+
+.page-intro h1 span{
+    color:var(--cyan);
+}
+
+.page-intro p{
+    margin-top:7px;
+
+    max-width:680px;
+
+    color:#698294;
+
+    font-size:11px;
+    line-height:1.6;
+}
+
+.stage{
+    text-align:right;
+}
+
+.stage small{
+    display:block;
+
+    color:#4f697b;
+
+    font-size:8px;
+    letter-spacing:1.2px;
+}
+
+.stage strong{
+    display:block;
+
+    margin-top:4px;
+
+    color:#a8c5d3;
+
+    font-size:12px;
+}
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.progress-card{
+    padding:19px 25px;
+
+    margin-bottom:20px;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10,27,44,.82),
+            rgba(5,15,27,.90)
+        );
+
+    border:1px solid var(--border);
+}
+
+.progress{
+    position:relative;
+
+    display:grid;
+
+    grid-template-columns:repeat(6,1fr);
+}
+
+.progress::before{
+    content:"";
+
+    position:absolute;
+
+    top:17px;
+    left:8%;
+    right:8%;
+
+    height:1px;
+
+    background:rgba(76,145,161,.18);
+}
+
+.progress-step{
+    position:relative;
+    z-index:2;
+
+    text-align:center;
+}
+
+.progress-circle{
+    width:35px;
+    height:35px;
+
+    margin:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#071521;
+
+    border:1px solid rgba(86,149,165,.20);
+
+    color:#587384;
+
+    font-size:9px;
+}
+
+.progress-step.complete .progress-circle{
+    color:#6edeb1;
+
+    border-color:rgba(85,232,168,.22);
+
+    background:rgba(85,232,168,.055);
+}
+
+.progress-step.active .progress-circle{
+    color:#031115;
+
+    background:
+        linear-gradient(
+            135deg,
+            #27e4f2,
+            #55e8a8
+        );
+
+    border:none;
+
+    box-shadow:
+        0 0 18px rgba(39,228,242,.16);
+}
+
+.progress-step span{
+    display:block;
+
+    margin-top:7px;
+
+    color:#4f697a;
+
+    font-size:7px;
+
+    letter-spacing:.8px;
+}
+
+.progress-step.complete span{
+    color:#64a58b;
+}
+
+.progress-step.active span{
+    color:#82dce5;
+}
+
+
+/* =====================================================
+   GENERIC CARD
+===================================================== */
+
+.card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,28,46,.91),
+            rgba(6,16,28,.95)
+        );
+
+    border:1px solid var(--border);
+
+    border-radius:19px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.13);
+}
+
+
+/* =====================================================
+   PATIENT BAR
+===================================================== */
+
+.patient-bar{
+    display:grid;
+
+    grid-template-columns:
+        1.5fr 1fr .6fr .6fr;
+
+    gap:1px;
+
+    margin-bottom:16px;
+
+    overflow:hidden;
+}
+
+.patient-data{
+    padding:13px 16px;
+
+    background:rgba(255,255,255,.015);
+
+    border-right:1px solid rgba(255,255,255,.035);
+}
+
+.patient-data:last-child{
+    border-right:none;
+}
+
+.patient-data span{
+    display:block;
+
+    color:#506b7d;
+
+    font-size:7px;
+
+    letter-spacing:1px;
+
+    margin-bottom:4px;
+}
+
+.patient-data strong{
+    color:#b7ced9;
+
+    font-size:10px;
+
+    font-weight:500;
+}
+
+.patient-data .cyan{
+    color:var(--cyan);
+}
+
+
+/* =====================================================
+   CONTENT GRID
+===================================================== */
+
+.content-grid{
+    display:grid;
+
+    grid-template-columns:1fr 315px;
+
+    gap:17px;
+}
+
+
+/* =====================================================
+   SYMPTOMS
+===================================================== */
+
+.symptom-panel{
+    padding:24px;
+}
+
+.section-title{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:7px;
+}
+
+.section-icon{
+    width:40px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:rgba(39,228,242,.065);
+
+    border:1px solid rgba(39,228,242,.09);
+
+    color:var(--cyan);
+
+    font-size:16px;
+}
+
+.section-title h2{
+    font-size:14px;
+
+    font-weight:600;
+}
+
+.section-title p{
+    margin-top:3px;
+
+    color:#5d7688;
+
+    font-size:9px;
+}
+
+.instruction{
+    margin:
+        17px
+        0
+        12px;
+
+    color:#6f899a;
+
+    font-size:9px;
+
+    letter-spacing:.25px;
+}
+
+
+/* =====================================================
+   SYMPTOM GRID
+===================================================== */
+
+.symptom-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:9px;
+}
+
+.symptom-card{
+    position:relative;
+
+    min-height:76px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.021);
+
+    border:
+        1px solid
+        rgba(255,255,255,.05);
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    user-select:none;
+}
+
+.symptom-card:hover{
+    transform:translateY(-1px);
+
+    border-color:
+        rgba(39,228,242,.17);
+
+    background:
+        rgba(39,228,242,.035);
+}
+
+.symptom-card.selected{
+    border-color:
+        rgba(39,228,242,.33);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(39,228,242,.09),
+            rgba(60,118,255,.035)
+        );
+
+    box-shadow:
+        inset 3px 0 0
+        rgba(39,228,242,.72);
+}
+
+.symptom-icon{
+    width:34px;
+    height:34px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:9px;
+
+    background:
+        rgba(39,228,242,.055);
+
+    color:#5edbe7;
+
+    font-size:14px;
+}
+
+.symptom-name{
+    font-size:10px;
+
+    color:#9cb2bf;
+
+    font-weight:500;
+}
+
+.symptom-card.selected .symptom-name{
+    color:#e2fbff;
+}
+
+.check{
+    position:absolute;
+
+    top:8px;
+    right:9px;
+
+    color:transparent;
+
+    font-size:10px;
+}
+
+.symptom-card.selected .check{
+    color:var(--green);
+}
+
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+.divider{
+    height:1px;
+
+    margin:25px 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(97,172,191,.13),
+            transparent
+        );
+}
+
+
+/* =====================================================
+   DETAILS
+===================================================== */
+
+.details-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:13px;
+}
+
+.form-group{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+}
+
+label{
+    color:#70899a;
+
+    font-size:8px;
+
+    letter-spacing:.7px;
+}
+
+select,
+textarea,
+input{
+    width:100%;
+
+    padding:11px 12px;
+
+    border-radius:10px;
+
+    border:
+        1px solid
+        rgba(111,183,202,.10);
+
+    outline:none;
+
+    background:
+        rgba(2,11,20,.50);
+
+    color:#dff7fb;
+
+    font-family:inherit;
+
+    font-size:10px;
+}
+
+select:focus,
+textarea:focus,
+input:focus{
+    border-color:
+        rgba(39,228,242,.38);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(39,228,242,.035);
+}
+
+select option{
+    background:#071521;
+}
+
+
+/* =====================================================
+   EYE SELECTION
+===================================================== */
+
+.eye-choice{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:7px;
+}
+
+.eye-button{
+    padding:11px 7px;
+
+    border-radius:9px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.055);
+
+    background:
+        rgba(255,255,255,.022);
+
+    color:#688294;
+
+    font-size:9px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.eye-button:hover{
+    border-color:
+        rgba(39,228,242,.18);
+}
+
+.eye-button.active{
+    color:#dffcff;
+
+    background:
+        rgba(39,228,242,.08);
+
+    border-color:
+        rgba(39,228,242,.30);
+}
+
+
+/* =====================================================
+   SEVERITY
+===================================================== */
+
+.severity{
+    display:flex;
+
+    gap:7px;
+}
+
+.severity button{
+    flex:1;
+
+    padding:10px 5px;
+
+    border-radius:9px;
+
+    background:
+        rgba(255,255,255,.022);
+
+    border:
+        1px solid
+        rgba(255,255,255,.055);
+
+    color:#647f91;
+
+    cursor:pointer;
+
+    font-size:8px;
+}
+
+.severity button.active{
+    color:#e4fbff;
+
+    border-color:
+        rgba(39,228,242,.28);
+
+    background:
+        rgba(39,228,242,.07);
+}
+
+
+/* =====================================================
+   NOTES / DICTATION
+===================================================== */
+
+.notes-section{
+    margin-top:18px;
+}
+
+.notes-header{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:8px;
+}
+
+.voice-button{
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:8px 11px;
+
+    border-radius:9px;
+
+    border:
+        1px solid
+        rgba(39,228,242,.12);
+
+    background:
+        rgba(39,228,242,.035);
+
+    color:#72ced9;
+
+    font-size:8px;
+
+    cursor:pointer;
+}
+
+.voice-button.listening{
+    color:#ffd1d7;
+
+    border-color:
+        rgba(255,113,131,.25);
+
+    background:
+        rgba(255,113,131,.06);
+}
+
+textarea{
+    min-height:90px;
+
+    resize:vertical;
+}
+
+
+/* =====================================================
+   SIDE COLUMN
+===================================================== */
+
+.side-column{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:13px;
+}
+
+.side-card{
+    padding:19px;
+}
+
+.side-title{
+    font-size:11px;
+
+    color:#c6dce5;
+
+    margin-bottom:13px;
+}
+
+.summary-count{
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    background:
+        radial-gradient(
+            circle at right,
+            rgba(39,228,242,.09),
+            transparent 55%
+        ),
+        rgba(255,255,255,.02);
+
+    border:
+        1px solid
+        rgba(39,228,242,.07);
+}
+
+.count-circle{
+    width:48px;
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    border:
+        1px solid
+        rgba(39,228,242,.24);
+
+    color:var(--cyan);
+
+    font-size:18px;
+}
+
+.summary-count span{
+    color:#5c7687;
+
+    font-size:8px;
+}
+
+.summary-count strong{
+    display:block;
+
+    margin-top:3px;
+
+    color:#a9c1cd;
+
+    font-size:10px;
+}
+
+.selected-list{
+    margin-top:13px;
+
+    min-height:80px;
+}
+
+.selected-item{
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:6px 0;
+
+    color:#7893a4;
+
+    font-size:8px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.03);
+}
+
+.selected-item::before{
+    content:"";
+
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:var(--cyan);
+}
+
+.no-symptoms{
+    color:#4d687a;
+
+    font-size:8px;
+
+    line-height:1.6;
+}
+
+
+/* WARNING */
+
+.safety-card{
+    padding:18px;
+
+    border-color:
+        rgba(255,210,105,.10);
+}
+
+.safety-label{
+    color:var(--yellow);
+
+    font-size:8px;
+
+    letter-spacing:1px;
+
+    margin-bottom:7px;
+}
+
+.safety-card h3{
+    font-size:11px;
+
+    margin-bottom:6px;
+}
+
+.safety-card p{
+    color:#617b8d;
+
+    font-size:8px;
+
+    line-height:1.6;
+}
+
+
+/* =====================================================
+   ACTION BAR
+===================================================== */
+
+.action-bar{
+    display:flex;
+
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:17px;
+
+    padding:17px 20px;
+
+    border-radius:16px;
+
+    background:
+        rgba(7,20,34,.75);
+
+    border:
+        1px solid
+        rgba(99,185,205,.08);
+}
+
+.back-button{
+    padding:11px 17px;
+
+    border-radius:10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    background:transparent;
+
+    color:#708999;
+
+    cursor:pointer;
+}
+
+.continue-button{
+    padding:12px 22px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #20cbdc,
+            #4ad7bd
+        );
+
+    color:#031216;
+
+    font-size:10px;
+
+    font-weight:750;
+
+    letter-spacing:.4px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 7px 24px
+        rgba(32,203,220,.14);
+
+    transition:.2s;
+}
+
+.continue-button:hover{
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 10px 30px
+        rgba(32,203,220,.23);
+}
+
+.action-note{
+    color:#4f697b;
+
+    font-size:8px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:950px){
+
+    .content-grid{
+        grid-template-columns:1fr;
+    }
+
+    .symptom-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:650px){
+
+    .topbar{
+        padding:0 18px;
+    }
+
+    .container{
+        padding:25px 18px;
+    }
+
+    .symptom-grid,
+    .details-grid{
+        grid-template-columns:1fr;
+    }
+
+    .patient-bar{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .progress{
+        grid-template-columns:repeat(3,1fr);
+
+        gap:17px;
+    }
+
+    .progress::before{
+        display:none;
+    }
+
+    .page-intro{
+        display:block;
+    }
+
+    .stage{
+        text-align:left;
+
+        margin-top:14px;
+    }
+}
+/* =====================================================
+   PROFESSIONAL VISUAL UPGRADE
+===================================================== */
+
+/* Overall text clarity */
+body{
+    font-family:
+        "Segoe UI",
+        "Inter",
+        Arial,
+        sans-serif;
+
+    letter-spacing:.05px;
+}
+
+
+/* MAIN TITLE */
+
+.page-intro h1{
+    font-size:38px;
+    font-weight:650;
+    letter-spacing:-1px;
+}
+
+.page-intro p{
+    font-size:13px;
+    line-height:1.7;
+    color:#8099aa;
+    max-width:720px;
+}
+
+.eyebrow{
+    font-size:10px;
+    letter-spacing:2.2px;
+}
+
+
+/* CURRENT STAGE */
+
+.stage small{
+    font-size:9px;
+}
+
+.stage strong{
+    font-size:14px;
+}
+
+
+/* PROGRESS BAR */
+
+.progress-step span{
+    font-size:9px;
+    font-weight:600;
+}
+
+.progress-circle{
+    width:38px;
+    height:38px;
+    font-size:10px;
+}
+
+
+/* PATIENT INFORMATION */
+
+.patient-data{
+    padding:15px 17px;
+}
+
+.patient-data span{
+    font-size:8px;
+    letter-spacing:1.2px;
+}
+
+.patient-data strong{
+    font-size:12px;
+}
+
+
+/* MAIN CARD */
+
+.symptom-panel{
+    padding:28px;
+}
+
+.section-title h2{
+    font-size:17px;
+    font-weight:650;
+}
+
+.section-title p{
+    font-size:10px;
+    color:#718b9c;
+}
+
+.section-icon{
+    width:44px;
+    height:44px;
+    font-size:18px;
+}
+
+.instruction{
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:1.2px;
+    margin-top:20px;
+}
+
+
+/* SYMPTOM CARDS */
+
+.symptom-grid{
+    gap:11px;
+}
+
+.symptom-card{
+    min-height:88px;
+    padding:15px;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,34,52,.78),
+            rgba(7,19,32,.86)
+        );
+
+    border:
+        1px solid
+        rgba(109,191,210,.08);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.015);
+
+    transition:
+        transform .2s,
+        border-color .2s,
+        background .2s,
+        box-shadow .2s;
+}
+
+.symptom-card:hover{
+    transform:translateY(-2px);
+
+    border-color:
+        rgba(39,228,242,.24);
+
+    box-shadow:
+        0 9px 22px rgba(0,0,0,.14);
+}
+
+.symptom-card.selected{
+    border-color:
+        rgba(39,228,242,.40);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(39,228,242,.11),
+            rgba(44,89,151,.055)
+        );
+
+    box-shadow:
+        inset 3px 0 0 rgba(39,228,242,.85),
+        0 8px 22px rgba(0,0,0,.12);
+}
+
+.symptom-icon{
+    width:39px;
+    height:39px;
+
+    font-size:15px;
+
+    border-radius:10px;
+}
+
+.symptom-name{
+    font-size:12px;
+    font-weight:600;
+    color:#a9bfca;
+}
+
+.symptom-card.selected .symptom-name{
+    color:#ecfdff;
+}
+
+
+/* FORM LABELS */
+
+label{
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.7px;
+}
+
+
+/* DROPDOWNS / TEXT AREAS */
+
+select,
+textarea,
+input{
+    font-size:12px;
+    padding:13px 14px;
+}
+
+
+/* LEFT / RIGHT / BOTH */
+
+.eye-button{
+    padding:12px 8px;
+
+    font-size:10px;
+    font-weight:600;
+}
+
+
+/* SEVERITY */
+
+.severity button{
+    padding:12px 6px;
+
+    font-size:9px;
+    font-weight:600;
+}
+
+
+/* VOICE BUTTON */
+
+.voice-button{
+    font-size:9px;
+    font-weight:600;
+
+    padding:9px 13px;
+}
+
+
+/* RIGHT SIDE CARDS */
+
+.side-card,
+.safety-card{
+    padding:21px;
+}
+
+.side-title{
+    font-size:13px;
+    font-weight:600;
+}
+
+.count-circle{
+    width:55px;
+    height:55px;
+
+    font-size:21px;
+    font-weight:600;
+}
+
+.summary-count span{
+    font-size:9px;
+}
+
+.summary-count strong{
+    font-size:11px;
+}
+
+.selected-item{
+    font-size:10px;
+    padding:8px 0;
+}
+
+.no-symptoms{
+    font-size:10px;
+}
+
+
+/* IMPORTANT CARD */
+
+.safety-label{
+    font-size:9px;
+    font-weight:700;
+}
+
+.safety-card h3{
+    font-size:13px;
+}
+
+.safety-card p{
+    font-size:10px;
+    line-height:1.7;
+}
+
+
+/* BUTTONS */
+
+.back-button{
+    font-size:10px;
+    font-weight:600;
+
+    padding:12px 18px;
+}
+
+.continue-button{
+    font-size:11px;
+
+    padding:13px 24px;
+}
+
+.action-note{
+    font-size:9px;
+    letter-spacing:.7px;
+}
+
+
+/* HEADER BRAND */
+
+.brand-name{
+    font-size:18px;
+}
+
+.brand-sub{
+    font-size:9px;
+}
+
+.status-pill{
+    font-size:10px;
+}
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<header class="topbar">
+
+<div class="brand">
+
+    <div class="brand-logo">
+
+        <svg class="guardian-logo" viewBox="0 0 64 64">
+
+            <path
+                d="M7 32 C14 19 22 14 32 14 C42 14 50 19 57 32 C50 45 42 50 32 50 C22 50 14 45 7 32Z"
+                class="logo-eye"
+            />
+
+            <circle cx="32" cy="32" r="10" class="logo-iris"/>
+
+            <circle cx="32" cy="32" r="4" class="logo-core"/>
+
+            <circle cx="32" cy="14" r="1.8" class="logo-node"/>
+            <circle cx="50" cy="32" r="1.8" class="logo-node"/>
+            <circle cx="32" cy="50" r="1.8" class="logo-node"/>
+            <circle cx="14" cy="32" r="1.8" class="logo-node"/>
+
+            <path
+                d="M32 14 V20 M50 32 H44 M32 50 V44 M14 32 H20"
+                class="logo-connect"
+            />
+
+        </svg>
+
+    </div>
+
+
+    <div>
+
+        <div class="brand-name">
+            Eye<span>GUARDIAN</span> Vision
+        </div>
+
+        <div class="brand-sub">
+            SMART EYECARE SCREENING
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="header-right">
+
+    <div class="status-pill">
+
+        <span class="dot"></span>
+
+        SCREENING ACTIVE
+
+    </div>
+
+    <button
+        class="exit-button"
+        onclick="goHome()"
+    >
+        × Exit Screening
+    </button>
+
+</div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+====================================================== -->
+
+<main class="container">
+
+
+<!-- INTRO -->
+
+<section class="page-intro">
+
+<div>
+
+    <div class="eyebrow">
+        SCREENING SESSION / STEP 02
+    </div>
+
+    <h1>
+        Symptom <span>Assessment</span>
+    </h1>
+
+    <p>
+        Select the symptoms currently experienced by the user
+        and provide relevant information about their duration,
+        severity and affected eye.
+    </p>
+
+</div>
+
+
+<div class="stage">
+
+    <small>CURRENT STAGE</small>
+
+    <strong>02 / SYMPTOMS</strong>
+
+</div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PROGRESS
+====================================================== -->
+
+<section class="progress-card">
+
+<div class="progress">
+
+    <div class="progress-step complete">
+        <div class="progress-circle">✓</div>
+        <span>REGISTER</span>
+    </div>
+
+    <div class="progress-step active">
+        <div class="progress-circle">02</div>
+        <span>SYMPTOMS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">03</div>
+        <span>CAPTURE</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">04</div>
+        <span>VISION TESTS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">05</div>
+        <span>ANALYSIS</span>
+    </div>
+
+    <div class="progress-step">
+        <div class="progress-circle">06</div>
+        <span>REPORT</span>
+    </div>
+
+</div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PATIENT INFORMATION BAR
+====================================================== -->
+
+<section class="card patient-bar">
+
+<div class="patient-data">
+
+    <span>PATIENT</span>
+
+    <strong id="patientName">
+        Screening User
+    </strong>
+
+</div>
+
+
+<div class="patient-data">
+
+    <span>SCREENING ID</span>
+
+    <strong
+        class="cyan"
+        id="screeningID"
+    >
+        EGV
+    </strong>
+
+</div>
+
+
+<div class="patient-data">
+
+    <span>AGE</span>
+
+    <strong id="patientAge">
+        --
+    </strong>
+
+</div>
+
+
+<div class="patient-data">
+
+    <span>STAGE</span>
+
+    <strong>
+        02 / 06
+    </strong>
+
+</div>
+
+</section>
+
+
+
+<div class="content-grid">
+
+
+<!-- =====================================================
+     MAIN SYMPTOM PANEL
+====================================================== -->
+
+<section class="card symptom-panel">
+
+
+<div class="section-title">
+
+   <div class="section-icon">
+    ◉
+</div>
+
+    <div>
+
+     <h2>
+    Eye & Vision Symptom Assessment
+</h2>
+
+      <p>
+    Select all symptoms currently experienced by the screening user
+</p>
+
+    </div>
+
+</div>
+
+
+<div class="instruction">
+    SELECT ONE OR MORE SYMPTOMS
+</div>
+
+
+
+<div
+    class="symptom-grid"
+    id="symptomGrid"
+>
+
+
+<div class="symptom-card" data-symptom="Blurred vision">
+
+    <div class="symptom-icon">◉</div>
+
+    <div class="symptom-name">
+        Blurred Vision
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Headache">
+
+    <div class="symptom-icon">✦</div>
+
+    <div class="symptom-name">
+        Headache
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Eye strain">
+
+    <div class="symptom-icon">◎</div>
+
+    <div class="symptom-name">
+        Eye Strain
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Difficulty focusing">
+
+    <div class="symptom-icon">⊙</div>
+
+    <div class="symptom-name">
+        Difficulty Focusing
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Eye redness">
+
+    <div class="symptom-icon">◈</div>
+
+    <div class="symptom-name">
+        Eye Redness
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Eye pain">
+
+    <div class="symptom-icon">+</div>
+
+    <div class="symptom-name">
+        Eye Pain
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Double vision">
+
+    <div class="symptom-icon">◉◉</div>
+
+    <div class="symptom-name">
+        Double Vision
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Light sensitivity">
+
+    <div class="symptom-icon">☼</div>
+
+    <div class="symptom-name">
+        Light Sensitivity
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Floaters or spots">
+
+    <div class="symptom-icon">••</div>
+
+    <div class="symptom-name">
+        Floaters / Spots
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Itching or irritation">
+
+    <div class="symptom-icon">◇</div>
+
+    <div class="symptom-name">
+        Itching / Irritation
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Watery eyes">
+
+    <div class="symptom-icon">◌</div>
+
+    <div class="symptom-name">
+        Watery Eyes
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+<div class="symptom-card" data-symptom="Other">
+
+    <div class="symptom-icon">＋</div>
+
+    <div class="symptom-name">
+        Other Symptom
+    </div>
+
+    <div class="check">✓</div>
+
+</div>
+
+
+</div>
+
+
+
+<div class="divider"></div>
+
+
+
+<!-- =====================================================
+     DETAILS
+====================================================== -->
+
+<div class="section-title">
+
+    <div class="section-icon">
+        ◫
+    </div>
+
+    <div>
+
+        <h2>
+            Symptom Details
+        </h2>
+
+        <p>
+            Add more information about the symptoms
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="details-grid">
+
+
+<!-- EYE -->
+
+<div class="form-group">
+
+<label>
+    AFFECTED EYE
+</label>
+
+
+<div class="eye-choice">
+
+<button
+    type="button"
+    class="eye-button"
+    data-eye="Left"
+>
+    LEFT
+</button>
+
+<button
+    type="button"
+    class="eye-button"
+    data-eye="Right"
+>
+    RIGHT
+</button>
+
+<button
+    type="button"
+    class="eye-button"
+    data-eye="Both"
+>
+    BOTH
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- DURATION -->
+
+<div class="form-group">
+
+<label for="duration">
+    DURATION
+</label>
+
+<select id="duration">
+
+    <option value="">
+        Select duration
+    </option>
+
+    <option>Less than 24 hours</option>
+
+    <option>1–3 days</option>
+
+    <option>4–7 days</option>
+
+    <option>1–4 weeks</option>
+
+    <option>1–6 months</option>
+
+    <option>More than 6 months</option>
+
+</select>
+
+</div>
+
+
+
+<!-- SEVERITY -->
+
+<div class="form-group">
+
+<label>
+    SEVERITY
+</label>
+
+<div class="severity">
+
+<button
+    type="button"
+    data-severity="Mild"
+>
+    MILD
+</button>
+
+<button
+    type="button"
+    data-severity="Moderate"
+>
+    MODERATE
+</button>
+
+<button
+    type="button"
+    data-severity="Severe"
+>
+    SEVERE
+</button>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- NOTES -->
+
+<div class="notes-section">
+
+<div class="notes-header">
+
+<label for="notes">
+    ADDITIONAL SYMPTOM INFORMATION
+</label>
+
+
+<button
+    type="button"
+    class="voice-button"
+    id="voiceButton"
+    onclick="startDictation()"
+>
+
+    🎙 DICTATE
+
+</button>
+
+</div>
+
+
+<textarea
+    id="notes"
+    placeholder="Describe any additional symptoms or information here..."
+></textarea>
+
+</div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     SIDE COLUMN
+====================================================== -->
+
+<aside class="side-column">
+
+
+<div class="card side-card">
+
+<div class="side-title">
+    Symptom Summary
+</div>
+
+
+<div class="summary-count">
+
+    <div
+        class="count-circle"
+        id="symptomCount"
+    >
+        0
+    </div>
+
+    <div>
+
+        <span>SELECTED</span>
+
+        <strong>
+            Current symptoms
+        </strong>
+
+    </div>
+
+</div>
+
+
+<div
+    class="selected-list"
+    id="selectedList"
+>
+
+    <div class="no-symptoms">
+        No symptoms selected yet.
+    </div>
+
+</div>
+
+</div>
+
+
+
+<div class="card safety-card">
+
+    <div class="safety-label">
+        IMPORTANT
+    </div>
+
+    <h3>
+        Preliminary Screening
+    </h3>
+
+    <p>
+        Symptom information supports the screening process
+        but does not provide a diagnosis. Concerning or
+        urgent symptoms should be assessed by a qualified
+        healthcare professional.
+    </p>
+
+</div>
+
+
+
+<div class="card side-card">
+
+    <div class="side-title">
+        Screening Progress
+    </div>
+
+    <div class="patient-data">
+
+        <span>COMPLETED</span>
+
+        <strong class="cyan">
+            Registration
+        </strong>
+
+    </div>
+
+    <div class="patient-data">
+
+        <span>CURRENT</span>
+
+        <strong>
+            Symptom Assessment
+        </strong>
+
+    </div>
+
+    <div class="patient-data">
+
+        <span>NEXT</span>
+
+        <strong>
+            Eye Capture
+        </strong>
+
+    </div>
+
+</div>
+
+
+</aside>
+
+</div>
+
+
+
+<!-- =====================================================
+     ACTIONS
+====================================================== -->
+
+<div class="action-bar">
+
+
+<button
+    class="back-button"
+    onclick="goBack()"
+>
+    ← Back to Registration
+</button>
+
+
+<div class="action-note">
+    STEP 02 OF 06 • SYMPTOM ASSESSMENT
+</div>
+
+
+<button
+    class="continue-button"
+    onclick="continueScreening()"
+>
+    CONTINUE TO EYE CAPTURE &nbsp; →
+</button>
+
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+/* =====================================================
+   LOAD PATIENT
+===================================================== */
+
+const patient =
+    JSON.parse(
+        sessionStorage.getItem(
+            "eyeGuardianPatient"
+        ) || "{}"
+    );
+
+
+const storedID =
+    sessionStorage.getItem(
+        "screeningID"
+    );
+
+
+if(patient.fullName){
+
+    document.getElementById(
+        "patientName"
+    ).textContent =
+        patient.fullName;
+
+}
+
+
+if(patient.age){
+
+    document.getElementById(
+        "patientAge"
+    ).textContent =
+        patient.age;
+
+}
+
+
+if(storedID){
+
+    document.getElementById(
+        "screeningID"
+    ).textContent =
+        storedID;
+
+}
+
+
+
+/* =====================================================
+   SYMPTOM SELECTION
+===================================================== */
+
+let selectedSymptoms = [];
+
+
+const symptomCards =
+    document.querySelectorAll(
+        ".symptom-card"
+    );
+
+
+symptomCards.forEach(card => {
+
+    card.addEventListener(
+        "click",
+        function(){
+
+            const symptom =
+                this.dataset.symptom;
+
+
+            this.classList.toggle(
+                "selected"
+            );
+
+
+            if(
+                this.classList.contains(
+                    "selected"
+                )
+            ){
+
+                if(
+                    !selectedSymptoms.includes(
+                        symptom
+                    )
+                ){
+
+                    selectedSymptoms.push(
+                        symptom
+                    );
+
+                }
+
+            }else{
+
+                selectedSymptoms =
+                    selectedSymptoms.filter(
+                        item =>
+                            item !== symptom
+                    );
+
+            }
+
+
+            updateSummary();
+
+        }
+    );
+
+});
+
+
+
+/* =====================================================
+   UPDATE SUMMARY
+===================================================== */
+
+function updateSummary(){
+
+    document.getElementById(
+        "symptomCount"
+    ).textContent =
+        selectedSymptoms.length;
+
+
+    const list =
+        document.getElementById(
+            "selectedList"
+        );
+
+
+    if(
+        selectedSymptoms.length === 0
+    ){
+
+        list.innerHTML =
+            '<div class="no-symptoms">No symptoms selected yet.</div>';
+
+        return;
+    }
+
+
+    list.innerHTML =
+        selectedSymptoms
+            .map(
+                symptom =>
+                `<div class="selected-item">${symptom}</div>`
+            )
+            .join("");
+
+}
+
+
+
+/* =====================================================
+   AFFECTED EYE
+===================================================== */
+
+let affectedEye = "";
+
+
+document
+.querySelectorAll(
+    ".eye-button"
+)
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        function(){
+
+            document
+            .querySelectorAll(
+                ".eye-button"
+            )
+            .forEach(
+                btn =>
+                    btn.classList.remove(
+                        "active"
+                    )
+            );
+
+
+            this.classList.add(
+                "active"
+            );
+
+
+            affectedEye =
+                this.dataset.eye;
+
+        }
+    );
+
+});
+
+
+
+/* =====================================================
+   SEVERITY
+===================================================== */
+
+let severity = "";
+
+
+document
+.querySelectorAll(
+    ".severity button"
+)
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        function(){
+
+            document
+            .querySelectorAll(
+                ".severity button"
+            )
+            .forEach(
+                btn =>
+                    btn.classList.remove(
+                        "active"
+                    )
+            );
+
+
+            this.classList.add(
+                "active"
+            );
+
+
+            severity =
+                this.dataset.severity;
+
+        }
+    );
+
+});
+
+
+
+/* =====================================================
+   VOICE DICTATION
+===================================================== */
+
+function startDictation(){
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if(!SpeechRecognition){
+
+        alert(
+            "Voice dictation is not supported by this browser. You can type the symptom information instead."
+        );
+
+        return;
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    recognition.lang =
+        "en-US";
+
+
+    recognition.interimResults =
+        false;
+
+
+    const button =
+        document.getElementById(
+            "voiceButton"
+        );
+
+
+    button.classList.add(
+        "listening"
+    );
+
+
+    button.textContent =
+        "● LISTENING...";
+
+
+    recognition.start();
+
+
+    recognition.onresult =
+        function(event){
+
+            const speech =
+                event.results[0][0].transcript;
+
+
+            const notes =
+                document.getElementById(
+                    "notes"
+                );
+
+
+            if(
+                notes.value.trim() !== ""
+            ){
+
+                notes.value +=
+                    " " + speech;
+
+            }else{
+
+                notes.value =
+                    speech;
+
+            }
+
+        };
+
+
+    recognition.onend =
+        function(){
+
+            button.classList.remove(
+                "listening"
+            );
+
+            button.textContent =
+                "🎙 DICTATE";
+
+        };
+
+}
+
+
+
+/* =====================================================
+   CONTINUE
+===================================================== */
+
+async function continueScreening(){
+
+    const symptomData = {
+
+        symptoms:
+            selectedSymptoms,
+
+        affectedEye:
+            affectedEye,
+
+        duration:
+            document.getElementById(
+                "duration"
+            ).value,
+
+        severity:
+            severity,
+
+        notes:
+            document.getElementById(
+                "notes"
+            ).value.trim()
+
+    };
+
+
+    sessionStorage.setItem(
+        "eyeGuardianSymptoms",
+        JSON.stringify(
+            symptomData
+        )
+    );
+
+    // Persist symptom details to backend so the report can retrieve them
+    const backendScreeningID = sessionStorage.getItem("screeningID");
+    if (backendScreeningID) {
+        try {
+            await EyeGuardAPI.patchScreening(backendScreeningID, {
+                symptoms: selectedSymptoms,
+                affected_eye: affectedEye || null,
+                symptom_duration: symptomData.duration || null,
+                symptom_severity: severity || null,
+                symptom_notes: symptomData.notes || null
+            });
+        } catch (e) {
+            console.warn("Could not persist symptom details to backend:", e);
+        }
+    }
+
+    window.location.href =
+        "capture.html";
+
+}
+
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function goBack(){
+
+    window.location.href =
+        "patient.html";
+
+}
+
+
+function goHome(){
+
+    window.location.href =
+        "index.html";
+
+}
+
+</script>
+
+
+</body>
+</html>

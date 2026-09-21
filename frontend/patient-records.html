@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+Patient Records | EyeGUARDIAN Vision
+</title>
+<script src="js/api.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --panel:#081624;
+    --panel2:#0b1c2c;
+    --cyan:#27e4f2;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff7183;
+    --white:#f4fcff;
+    --muted:#71899a;
+    --border:rgba(124,211,232,.10);
+}
+
+body{
+
+    min-height:100vh;
+
+    font-family:
+        "Segoe UI",
+        "Inter",
+        Arial,
+        sans-serif;
+
+    color:var(--white);
+
+    background:
+
+        radial-gradient(
+            circle at 78% 5%,
+            rgba(27,201,226,.10),
+            transparent 27%
+        ),
+
+        radial-gradient(
+            circle at 94% 70%,
+            rgba(102,76,255,.07),
+            transparent 30%
+        ),
+
+        var(--bg);
+}
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(
+            rgba(74,210,230,.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(74,210,230,.025) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        55px 55px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.topbar{
+
+    height:76px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:
+        0 45px;
+
+    border-bottom:
+        1px solid
+        rgba(71,206,226,.08);
+
+    background:
+        rgba(4,13,23,.82);
+
+    backdrop-filter:
+        blur(18px);
+}
+
+.brand{
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+}
+
+.brand-logo{
+
+    width:45px;
+    height:45px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(59,230,244,.15),
+            rgba(12,31,48,.95) 55%,
+            rgba(5,16,28,.98)
+        );
+
+    border:
+        1px solid
+        rgba(68,221,238,.22);
+}
+
+.guardian-logo{
+    width:31px;
+    height:31px;
+}
+
+.logo-eye{
+    fill:rgba(39,228,242,.035);
+    stroke:#54ddea;
+    stroke-width:2;
+}
+
+.logo-iris{
+    fill:none;
+    stroke:#69eff1;
+    stroke-width:2;
+}
+
+.logo-core{
+    fill:#d9ffff;
+}
+
+.logo-node{
+    fill:#55e8a8;
+}
+
+.logo-connect{
+    fill:none;
+    stroke:#398fa4;
+    stroke-width:1.3;
+}
+
+.brand-name{
+
+    font-size:18px;
+    font-weight:700;
+}
+
+.brand-name span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+
+    margin-top:2px;
+
+    color:#506c7e;
+
+    font-size:9px;
+    letter-spacing:1.6px;
+}
+
+.header-actions{
+
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+}
+
+.status-pill{
+
+    display:flex;
+    align-items:center;
+
+    gap:7px;
+
+    padding:
+        8px 12px;
+
+    border-radius:10px;
+
+    background:
+        rgba(85,232,168,.045);
+
+    border:
+        1px solid
+        rgba(85,232,168,.10);
+
+    color:#72dfaf;
+
+    font-size:10px;
+}
+
+.dot{
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:var(--green);
+
+    box-shadow:
+        0 0 8px
+        rgba(85,232,168,.7);
+}
+
+.dashboard-button{
+
+    padding:
+        9px 14px;
+
+    border-radius:10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.025);
+
+    color:#7893a4;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.container{
+
+    max-width:1320px;
+
+    margin:auto;
+
+    padding:
+        35px 35px 55px;
+}
+
+.page-intro{
+
+    display:flex;
+
+    justify-content:
+        space-between;
+
+    align-items:flex-end;
+
+    gap:30px;
+
+    margin-bottom:23px;
+}
+
+.eyebrow{
+
+    color:var(--cyan);
+
+    font-size:10px;
+    font-weight:700;
+
+    letter-spacing:2px;
+}
+
+.page-title{
+
+    margin-top:7px;
+
+    font-size:39px;
+    font-weight:650;
+
+    letter-spacing:-1px;
+}
+
+.page-title span{
+    color:var(--cyan);
+}
+
+.page-description{
+
+    max-width:720px;
+
+    margin-top:8px;
+
+    color:#8099aa;
+
+    font-size:13px;
+    line-height:1.7;
+}
+
+.record-state{
+
+    text-align:right;
+}
+
+.record-state small{
+
+    display:block;
+
+    color:#4f697b;
+
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+.record-state strong{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:var(--green);
+
+    font-size:12px;
+}
+
+
+/* =====================================================
+   COMMON CARD
+===================================================== */
+
+.card{
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(11,28,46,.91),
+            rgba(6,16,28,.95)
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:19px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,.13);
+}
+
+
+/* =====================================================
+   PATIENT HERO
+===================================================== */
+
+.patient-hero{
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:grid;
+
+    grid-template-columns:
+        auto 1fr auto;
+
+    gap:22px;
+
+    align-items:center;
+
+    padding:27px;
+
+    margin-bottom:18px;
+}
+
+.patient-hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:340px;
+    height:340px;
+
+    right:-80px;
+    top:-170px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(39,228,242,.09),
+            transparent 65%
+        );
+}
+
+.avatar{
+
+    width:72px;
+    height:72px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:20px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(39,228,242,.10),
+            rgba(55,98,190,.05)
+        );
+
+    border:
+        1px solid
+        rgba(39,228,242,.13);
+
+    color:var(--cyan);
+
+    font-size:29px;
+}
+
+.patient-name{
+
+    font-size:24px;
+    font-weight:620;
+}
+
+.patient-meta{
+
+    margin-top:6px;
+
+    color:#728c9d;
+
+    font-size:11px;
+}
+
+.screening-id-box{
+
+    position:relative;
+    z-index:2;
+
+    min-width:180px;
+
+    padding:15px 17px;
+
+    text-align:right;
+
+    border-radius:13px;
+
+    background:
+        rgba(39,228,242,.035);
+
+    border:
+        1px solid
+        rgba(39,228,242,.08);
+}
+
+.screening-id-box span{
+
+    display:block;
+
+    color:#526d7f;
+
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.screening-id-box strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:var(--cyan);
+
+    font-size:13px;
+}
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.section{
+
+    margin-top:18px;
+
+    padding:24px;
+}
+
+.section-header{
+
+    display:flex;
+
+    justify-content:
+        space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:17px;
+}
+
+.section-heading{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+.section-icon{
+
+    width:41px;
+    height:41px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:
+        rgba(39,228,242,.06);
+
+    border:
+        1px solid
+        rgba(39,228,242,.08);
+
+    color:var(--cyan);
+}
+
+.section-heading h2{
+
+    font-size:15px;
+
+    font-weight:620;
+}
+
+.section-heading p{
+
+    margin-top:4px;
+
+    color:#587486;
+
+    font-size:9px;
+}
+
+
+/* =====================================================
+   INFORMATION GRID
+===================================================== */
+
+.info-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:10px;
+}
+
+.info-box{
+
+    min-height:77px;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.022);
+
+    border:
+        1px solid
+        rgba(255,255,255,.04);
+}
+
+.info-box span{
+
+    display:block;
+
+    color:#536e80;
+
+    font-size:8px;
+
+    letter-spacing:.8px;
+}
+
+.info-box strong{
+
+    display:block;
+
+    margin-top:7px;
+
+    color:#b6ccd6;
+
+    font-size:11px;
+
+    font-weight:550;
+
+    line-height:1.5;
+}
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
+
+.history-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:10px;
+}
+
+.history-item{
+
+    padding:15px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.022);
+
+    border:
+        1px solid
+        rgba(255,255,255,.04);
+}
+
+.history-item span{
+
+    display:block;
+
+    color:#536e80;
+
+    font-size:8px;
+
+    letter-spacing:.8px;
+}
+
+.history-item strong{
+
+    display:block;
+
+    margin-top:7px;
+
+    color:#b6ccd6;
+
+    font-size:11px;
+
+    line-height:1.55;
+}
+
+.history-item.full{
+
+    grid-column:
+        1 / -1;
+}
+
+
+/* =====================================================
+   SYMPTOMS
+===================================================== */
+
+.symptom-tags{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    margin-bottom:16px;
+}
+
+.symptom-tag{
+
+    padding:
+        8px 11px;
+
+    border-radius:9px;
+
+    background:
+        rgba(39,228,242,.055);
+
+    border:
+        1px solid
+        rgba(39,228,242,.09);
+
+    color:#92cbd3;
+
+    font-size:9px;
+}
+
+.symptom-details{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:10px;
+}
+
+.symptom-detail{
+
+    padding:14px;
+
+    border-radius:11px;
+
+    background:
+        rgba(255,255,255,.022);
+
+    border:
+        1px solid
+        rgba(255,255,255,.04);
+}
+
+.symptom-detail span{
+
+    display:block;
+
+    color:#536e80;
+
+    font-size:8px;
+
+    letter-spacing:.8px;
+}
+
+.symptom-detail strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:#b5cad4;
+
+    font-size:10px;
+}
+
+.notes-box{
+
+    margin-top:10px;
+
+    padding:15px;
+
+    border-radius:11px;
+
+    background:
+        rgba(255,255,255,.02);
+
+    border:
+        1px solid
+        rgba(255,255,255,.04);
+}
+
+.notes-box span{
+
+    display:block;
+
+    color:#536e80;
+
+    font-size:8px;
+
+    letter-spacing:.8px;
+}
+
+.notes-box p{
+
+    margin-top:7px;
+
+    color:#829dab;
+
+    font-size:10px;
+
+    line-height:1.7;
+}
+
+
+/* =====================================================
+   SCREENING SUMMARY
+===================================================== */
+
+.module-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+}
+
+.module-card{
+
+    padding:16px;
+
+    border-radius:13px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(14,32,49,.74),
+            rgba(7,18,30,.82)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.045);
+}
+
+.module-card span{
+
+    display:block;
+
+    color:#526d7e;
+
+    font-size:8px;
+
+    letter-spacing:.8px;
+}
+
+.module-card strong{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:11px;
+}
+
+.complete{
+    color:var(--green)!important;
+}
+
+.pending{
+    color:var(--yellow)!important;
+}
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.progress-list{
+
+    display:grid;
+
+    gap:8px;
+
+    margin-top:16px;
+}
+
+.progress-row{
+
+    display:grid;
+
+    grid-template-columns:
+        auto 1fr auto;
+
+    gap:12px;
+
+    align-items:center;
+
+    padding:
+        12px 14px;
+
+    border-radius:11px;
+
+    background:
+        rgba(255,255,255,.02);
+
+    border:
+        1px solid
+        rgba(255,255,255,.035);
+}
+
+.progress-icon{
+
+    width:27px;
+    height:27px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:8px;
+
+    background:
+        rgba(39,228,242,.045);
+
+    color:#69dce7;
+
+    font-size:10px;
+}
+
+.progress-name{
+
+    color:#9eb5c0;
+
+    font-size:10px;
+}
+
+.progress-status{
+
+    font-size:8px;
+
+    font-weight:700;
+
+    letter-spacing:.7px;
+}
+
+
+/* =====================================================
+   ACTION BAR
+===================================================== */
+
+.actions{
+
+    display:flex;
+
+    justify-content:
+        space-between;
+
+    align-items:center;
+
+    margin-top:18px;
+
+    padding:17px 20px;
+
+    border-radius:16px;
+
+    background:
+        rgba(7,20,34,.75);
+
+    border:
+        1px solid
+        rgba(99,185,205,.08);
+}
+
+.actions-left{
+
+    color:#526d7e;
+
+    font-size:9px;
+}
+
+.action-buttons{
+
+    display:flex;
+    gap:9px;
+}
+
+.secondary-button,
+.primary-button{
+
+    padding:
+        12px 17px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:10px;
+
+    font-weight:650;
+}
+
+.secondary-button{
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.025);
+
+    color:#7893a4;
+}
+
+.primary-button{
+
+    border:none;
+
+    color:#031216;
+
+    background:
+
+        linear-gradient(
+            100deg,
+            #20cbdc,
+            #4ad7bd
+        );
+}
+
+
+/* =====================================================
+   NOTICE
+===================================================== */
+
+.notice{
+
+    margin-top:16px;
+
+    padding:15px 17px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,210,105,.035);
+
+    border:
+        1px solid
+        rgba(255,210,105,.09);
+
+    color:#718693;
+
+    font-size:9px;
+
+    line-height:1.7;
+}
+
+.notice strong{
+    color:var(--yellow);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:950px){
+
+    .info-grid,
+    .symptom-details,
+    .module-grid{
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+}
+
+@media(max-width:700px){
+
+    .patient-hero,
+    .page-intro{
+
+        grid-template-columns:1fr;
+        display:grid;
+    }
+
+    .screening-id-box,
+    .record-state{
+
+        text-align:left;
+    }
+
+    .info-grid,
+    .history-grid,
+    .symptom-details,
+    .module-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .history-item.full{
+        grid-column:auto;
+    }
+
+    .actions{
+
+        display:block;
+    }
+
+    .action-buttons{
+        margin-top:12px;
+        flex-direction:column;
+    }
+}
+
+/* DATABASE RECORDS TABLE */
+.db-section {
+    margin-top: 25px;
+    padding: 24px;
+}
+.db-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.db-search {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(39, 228, 242, 0.2);
+    border-radius: 10px;
+    padding: 9px 14px;
+    color: #fff;
+    font-size: 11px;
+    width: 260px;
+    outline: none;
+}
+.db-search:focus {
+    border-color: #27e4f2;
+    box-shadow: 0 0 10px rgba(39, 228, 242, 0.2);
+}
+.db-table-wrapper {
+    overflow-x: auto;
+}
+.db-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+.db-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #557283;
+    font-size: 8px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.db-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: #b1cad7;
+}
+.db-table tr:hover td {
+    background: rgba(39, 228, 242, 0.03);
+}
+.action-btn-sm {
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+.btn-view {
+    background: rgba(39, 228, 242, 0.15);
+    color: #27e4f2;
+    border: 1px solid rgba(39, 228, 242, 0.3);
+}
+.btn-view:hover {
+    background: rgba(39, 228, 242, 0.3);
+}
+.btn-del {
+    background: rgba(255, 111, 127, 0.1);
+    color: #ff6f7f;
+    border: 1px solid rgba(255, 111, 127, 0.25);
+    margin-left: 6px;
+}
+.btn-del:hover {
+    background: rgba(255, 111, 127, 0.25);
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+<div class="brand">
+
+    <div class="brand-logo">
+
+        <svg
+            class="guardian-logo"
+            viewBox="0 0 64 64"
+        >
+
+            <path
+                d="M7 32 C14 19 22 14 32 14 C42 14 50 19 57 32 C50 45 42 50 32 50 C22 50 14 45 7 32Z"
+                class="logo-eye"
+            />
+
+            <circle
+                cx="32"
+                cy="32"
+                r="10"
+                class="logo-iris"
+            />
+
+            <circle
+                cx="32"
+                cy="32"
+                r="4"
+                class="logo-core"
+            />
+
+            <circle cx="32" cy="14" r="1.8" class="logo-node"/>
+            <circle cx="50" cy="32" r="1.8" class="logo-node"/>
+            <circle cx="32" cy="50" r="1.8" class="logo-node"/>
+            <circle cx="14" cy="32" r="1.8" class="logo-node"/>
+
+            <path
+                d="M32 14 V20 M50 32 H44 M32 50 V44 M14 32 H20"
+                class="logo-connect"
+            />
+
+        </svg>
+
+    </div>
+
+
+    <div>
+
+        <div class="brand-name">
+
+            Eye<span>GUARDIAN</span> Vision
+
+        </div>
+
+        <div class="brand-sub">
+
+            PATIENT RECORD SYSTEM
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="header-actions">
+
+    <div class="status-pill">
+
+        <span class="dot"></span>
+
+        RECORD AVAILABLE
+
+    </div>
+
+
+    <button
+        class="dashboard-button"
+        onclick="goHome()"
+    >
+
+        ← Dashboard
+
+    </button>
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+
+<section class="page-intro">
+
+<div>
+
+    <div class="eyebrow">
+
+        EYEGUARDIAN / ACTIVE SCREENING RECORD
+
+    </div>
+
+    <h1 class="page-title">
+
+        Patient <span>Record</span>
+
+    </h1>
+
+    <p class="page-description">
+
+        A structured overview of patient registration,
+        eye-health history, reported symptoms and the
+        current EyeGUARDIAN screening session.
+
+    </p>
+
+</div>
+
+
+<div class="record-state">
+
+    <small>
+        RECORD STATUS
+    </small>
+
+    <strong>
+        ACTIVE SESSION
+    </strong>
+
+</div>
+
+</section>
+
+
+<!-- PATIENT HERO -->
+
+<section class="card patient-hero">
+
+<div class="avatar">
+    ◉
+</div>
+
+
+<div>
+
+    <div
+        class="patient-name"
+        id="patientName"
+    >
+        Screening User
+    </div>
+
+
+    <div
+        class="patient-meta"
+        id="patientMeta"
+    >
+        Patient information
+    </div>
+
+</div>
+
+
+<div class="screening-id-box">
+
+    <span>
+        SCREENING ID
+    </span>
+
+    <strong id="screeningID">
+        EGV
+    </strong>
+
+</div>
+
+</section>
+
+
+<!-- PERSONAL INFORMATION -->
+
+<section class="card section">
+
+<div class="section-header">
+
+<div class="section-heading">
+
+    <div class="section-icon">
+        ◉
+    </div>
+
+    <div>
+
+        <h2>
+            Personal Information
+        </h2>
+
+        <p>
+            Registration information for this session
+        </p>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div class="info-grid">
+
+<div class="info-box">
+
+    <span>FULL NAME</span>
+
+    <strong id="fullName">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="info-box">
+
+    <span>DATE OF BIRTH</span>
+
+    <strong id="dob">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="info-box">
+
+    <span>AGE</span>
+
+    <strong id="age">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="info-box">
+
+    <span>GENDER</span>
+
+    <strong id="gender">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="info-box">
+
+    <span>CONTACT NUMBER</span>
+
+    <strong id="contact">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="info-box">
+
+    <span>SCREENING ID</span>
+
+    <strong
+        id="screeningIDInfo"
+        class="complete"
+    >
+        EGV
+    </strong>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- EYE HISTORY -->
+
+<section class="card section">
+
+<div class="section-header">
+
+<div class="section-heading">
+
+    <div class="section-icon">
+        👁
+    </div>
+
+    <div>
+
+        <h2>
+            Eye Health History
+        </h2>
+
+        <p>
+            Information recorded during patient registration
+        </p>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div class="history-grid">
+
+<div class="history-item">
+
+    <span>
+        PREVIOUS EYE EXAMINATION
+    </span>
+
+    <strong id="previousExam">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="history-item">
+
+    <span>
+        CURRENTLY USES GLASSES / CONTACT LENSES
+    </span>
+
+    <strong id="visionAid">
+        Not recorded
+    </strong>
+
+</div>
+
+
+<div class="history-item full">
+
+    <span>
+        PREVIOUS EYE CONDITIONS / EXAMINATIONS
+    </span>
+
+    <strong id="eyeHistory">
+        None recorded
+    </strong>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SYMPTOMS -->
+
+<section class="card section">
+
+<div class="section-header">
+
+<div class="section-heading">
+
+    <div class="section-icon">
+        ✦
+    </div>
+
+    <div>
+
+        <h2>
+            Reported Symptoms
+        </h2>
+
+        <p>
+            Current symptom assessment recorded for this session
+        </p>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div
+    class="symptom-tags"
+    id="symptomTags"
+>
+</div>
+
+
+<div class="symptom-details">
+
+
+<div class="symptom-detail">
+
+    <span>
+        AFFECTED EYE
+    </span>
+
+    <strong id="affectedEye">
+        Not specified
+    </strong>
+
+</div>
+
+
+<div class="symptom-detail">
+
+    <span>
+        DURATION
+    </span>
+
+    <strong id="duration">
+        Not specified
+    </strong>
+
+</div>
+
+
+<div class="symptom-detail">
+
+    <span>
+        SEVERITY
+    </span>
+
+    <strong id="severity">
+        Not specified
+    </strong>
+
+</div>
+
+
+</div>
+
+
+<div class="notes-box">
+
+    <span>
+        ADDITIONAL SYMPTOM INFORMATION
+    </span>
+
+    <p id="symptomNotes">
+        No additional information recorded.
+    </p>
+
+</div>
+
+</section>
+
+
+<!-- SCREENING MODULES -->
+
+<section class="card section">
+
+<div class="section-header">
+
+<div class="section-heading">
+
+    <div class="section-icon">
+        ◫
+    </div>
+
+    <div>
+
+        <h2>
+            Screening Overview
+        </h2>
+
+        <p>
+            Completion status of the active screening session
+        </p>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div class="module-grid">
+
+
+<div class="module-card">
+
+    <span>
+        REGISTRATION
+    </span>
+
+    <strong
+        id="registrationSummary"
+        class="pending"
+    >
+        Pending
+    </strong>
+
+</div>
+
+
+<div class="module-card">
+
+    <span>
+        SYMPTOMS
+    </span>
+
+    <strong
+        id="symptomsSummary"
+        class="pending"
+    >
+        Pending
+    </strong>
+
+</div>
+
+
+<div class="module-card">
+
+    <span>
+        EYE CAPTURE
+    </span>
+
+    <strong
+        id="captureSummary"
+        class="pending"
+    >
+        Pending
+    </strong>
+
+</div>
+
+
+<div class="module-card">
+
+    <span>
+        COLOUR VISION
+    </span>
+
+    <strong
+        id="colourSummary"
+        class="pending"
+    >
+        Pending
+    </strong>
+
+</div>
+
+
+<div class="module-card">
+
+    <span>
+        NEAR VISION
+    </span>
+
+    <strong
+        id="nearSummary"
+        class="pending"
+    >
+        Pending
+    </strong>
+
+</div>
+
+
+<div class="module-card">
+
+    <span>
+        ANALYSIS
+    </span>
+
+    <strong id="analysisSummary">
+        Available
+    </strong>
+
+</div>
+
+
+<div class="module-card">
+
+    <span>
+        REPORT
+    </span>
+
+    <strong id="reportSummary">
+        Available
+    </strong>
+
+</div>
+
+
+</div>
+
+
+<div class="progress-list">
+
+
+<div class="progress-row">
+
+    <div class="progress-icon">
+        01
+    </div>
+
+    <div class="progress-name">
+        Patient Registration
+    </div>
+
+    <div
+        class="progress-status"
+        id="registrationStatus"
+    >
+        --
+    </div>
+
+</div>
+
+
+<div class="progress-row">
+
+    <div class="progress-icon">
+        02
+    </div>
+
+    <div class="progress-name">
+        Symptom Assessment
+    </div>
+
+    <div
+        class="progress-status"
+        id="symptomsStatus"
+    >
+        --
+    </div>
+
+</div>
+
+
+<div class="progress-row">
+
+    <div class="progress-icon">
+        03
+    </div>
+
+    <div class="progress-name">
+        Eye Image Capture
+    </div>
+
+    <div
+        class="progress-status"
+        id="captureStatus"
+    >
+        --
+    </div>
+
+</div>
+
+
+<div class="progress-row">
+
+    <div class="progress-icon">
+        04A
+    </div>
+
+    <div class="progress-name">
+        Colour Vision Screening
+    </div>
+
+    <div
+        class="progress-status"
+        id="colourStatus"
+    >
+        --
+    </div>
+
+</div>
+
+
+<div class="progress-row">
+
+    <div class="progress-icon">
+        04B
+    </div>
+
+    <div class="progress-name">
+        Near Vision Screening
+    </div>
+
+    <div
+        class="progress-status"
+        id="nearStatus"
+    >
+        --
+    </div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- ACTIONS -->
+
+<div class="actions">
+
+<div class="actions-left">
+
+    ACTIVE SCREENING DATA • BROWSER SESSION
+
+</div>
+
+
+<div class="action-buttons">
+
+<button
+    class="secondary-button"
+    onclick="openAnalysis()"
+>
+    SCREENING ANALYSIS
+</button>
+
+
+<button
+    class="primary-button"
+    onclick="openReport()"
+>
+    OPEN SMART REPORT →
+</button>
+
+</div>
+
+</div>
+
+
+<!-- DATABASE RECORDS SECTION -->
+<section class="card db-section">
+    <div class="db-header">
+        <div>
+            <h2>Historical Screening Records</h2>
+            <p style="color:#607c8f; font-size:10px; margin-top:3px;">
+                Permanent patient screenings retrieved from the EyeGUARDIAN SQLite database
+            </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <input type="text" class="db-search" id="dbSearchInput" placeholder="🔍 Search patient name or ID..." oninput="filterDbRecords()">
+            <button class="action-btn-sm btn-view" style="padding:9px 14px;" onclick="loadDatabaseRecords()">🔄 REFRESH</button>
+        </div>
+    </div>
+
+    <div class="db-table-wrapper">
+        <table class="db-table">
+            <thead>
+                <tr>
+                    <th>SCREENING ID</th>
+                    <th>PATIENT NAME</th>
+                    <th>AGE / SEX</th>
+                    <th>DATE CREATED</th>
+                    <th>MODULES</th>
+                    <th>PRELIMINARY RISK</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="dbRecordsBody">
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:24px; color:#506a7b;">
+                        Connecting to database...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+</main>
+
+
+<script>
+
+
+/* =====================================================
+   LOAD CURRENT SCREENING
+===================================================== */
+
+const patient =
+    JSON.parse(
+        sessionStorage.getItem(
+            "eyeGuardianPatient"
+        ) || "{}"
+    );
+
+
+const symptoms =
+    JSON.parse(
+        sessionStorage.getItem(
+            "eyeGuardianSymptoms"
+        ) || "{}"
+    );
+
+
+const capture =
+    JSON.parse(
+        sessionStorage.getItem(
+            "eyeGuardianCapture"
+        ) || "{}"
+    );
+
+
+const colour =
+    JSON.parse(
+        sessionStorage.getItem(
+            "eyeGuardianColourVision"
+        ) || "{}"
+    );
+
+
+const near =
+    JSON.parse(
+        sessionStorage.getItem(
+            "eyeGuardianNearVision"
+        ) || "{}"
+    );
+
+
+const screeningID =
+    sessionStorage.getItem(
+        "screeningID"
+    ) || "EGV";
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function showValue(
+    id,
+    value,
+    fallback = "Not recorded"
+){
+
+    document.getElementById(
+        id
+    ).textContent =
+
+        value
+            ? value
+            : fallback;
+
+}
+
+
+function setProgressStatus(
+    id,
+    completed
+){
+
+    const element =
+        document.getElementById(id);
+
+
+    if(completed){
+
+        element.textContent =
+            "COMPLETED";
+
+        element.className =
+            "progress-status complete";
+
+    }else{
+
+        element.textContent =
+            "PENDING";
+
+        element.className =
+            "progress-status pending";
+
+    }
+
+}
+
+
+function setSummary(
+    id,
+    completed,
+    completeText = "Completed"
+){
+
+    const element =
+        document.getElementById(id);
+
+
+    if(completed){
+
+        element.textContent =
+            completeText;
+
+        element.className =
+            "complete";
+
+    }else{
+
+        element.textContent =
+            "Pending";
+
+        element.className =
+            "pending";
+
+    }
+
+}
+
+
+/* =====================================================
+   PATIENT
+===================================================== */
+
+showValue(
+    "patientName",
+    patient.fullName,
+    "Screening User"
+);
+
+
+showValue(
+    "fullName",
+    patient.fullName
+);
+
+
+showValue(
+    "age",
+    patient.age
+        ? `${patient.age} years`
+        : ""
+);
+
+
+showValue(
+    "gender",
+    patient.gender
+);
+
+
+showValue(
+    "dob",
+    patient.dob
+);
+
+
+showValue(
+    "contact",
+    patient.contact
+);
+
+
+showValue(
+    "previousExam",
+    patient.previousExam
+);
+
+
+showValue(
+    "visionAid",
+    patient.visionAid
+);
+
+
+showValue(
+    "eyeHistory",
+    patient.eyeHistory,
+    "None recorded"
+);
+
+
+document.getElementById(
+    "screeningID"
+).textContent =
+    screeningID;
+
+
+document.getElementById(
+    "screeningIDInfo"
+).textContent =
+    screeningID;
+
+
+const metaParts = [];
+
+
+if(patient.age){
+
+    metaParts.push(
+        `Age ${patient.age}`
+    );
+
+}
+
+
+if(patient.gender){
+
+    metaParts.push(
+        patient.gender
+    );
+
+}
+
+
+if(patient.contact){
+
+    metaParts.push(
+        patient.contact
+    );
+
+}
+
+
+document.getElementById(
+    "patientMeta"
+).textContent =
+
+    metaParts.length
+        ? metaParts.join("  •  ")
+        : "Patient registration information";
+
+
+/* =====================================================
+   SYMPTOMS
+===================================================== */
+
+const symptomArray =
+
+    Array.isArray(
+        symptoms.symptoms
+    )
+
+    ? symptoms.symptoms
+
+    : [];
+
+
+const symptomTags =
+    document.getElementById(
+        "symptomTags"
+    );
+
+
+if(symptomArray.length){
+
+    symptomTags.innerHTML =
+
+        symptomArray
+
+            .map(
+                symptom =>
+                `<span class="symptom-tag">${symptom}</span>`
+            )
+
+            .join("");
+
+}else{
+
+    symptomTags.innerHTML =
+
+        `
+        <span class="symptom-tag">
+            No symptoms recorded
+        </span>
+        `;
+
+}
+
+
+showValue(
+    "affectedEye",
+    symptoms.affectedEye,
+    "Not specified"
+);
+
+
+showValue(
+    "duration",
+    symptoms.duration,
+    "Not specified"
+);
+
+
+showValue(
+    "severity",
+    symptoms.severity,
+    "Not specified"
+);
+
+
+showValue(
+    "symptomNotes",
+    symptoms.notes,
+    "No additional information recorded."
+);
+
+
+/* =====================================================
+   SCREENING COMPLETION
+===================================================== */
+
+const registrationComplete =
+    Boolean(
+        patient.fullName &&
+        patient.age
+    );
+
+
+const symptomsComplete =
+    Boolean(
+        sessionStorage.getItem(
+            "eyeGuardianSymptoms"
+        )
+    );
+
+
+const captureComplete =
+    Boolean(
+        capture.leftCaptured &&
+        capture.rightCaptured
+    );
+
+
+const colourComplete =
+    Boolean(
+        colour.completed
+    );
+
+
+const nearComplete =
+    Boolean(
+        near.completed
+    );
+
+
+setProgressStatus(
+    "registrationStatus",
+    registrationComplete
+);
+
+
+setProgressStatus(
+    "symptomsStatus",
+    symptomsComplete
+);
+
+
+setProgressStatus(
+    "captureStatus",
+    captureComplete
+);
+
+
+setProgressStatus(
+    "colourStatus",
+    colourComplete
+);
+
+
+setProgressStatus(
+    "nearStatus",
+    nearComplete
+);
+
+
+setSummary(
+    "registrationSummary",
+    registrationComplete
+);
+
+
+setSummary(
+    "symptomsSummary",
+    symptomsComplete,
+    symptomArray.length
+        ? `${symptomArray.length} Recorded`
+        : "Recorded"
+);
+
+
+setSummary(
+    "captureSummary",
+    captureComplete,
+    "Both Eyes Captured"
+);
+
+
+setSummary(
+    "colourSummary",
+    colourComplete,
+    colour.totalPlates
+        ? `${colour.totalPlates} Plates Completed`
+        : "Completed"
+);
+
+
+setSummary(
+    "nearSummary",
+    nearComplete,
+    "Completed"
+);
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function goHome(){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+function openAnalysis(){
+
+    window.location.href =
+        "analysis.html";
+
+}
+
+
+function openReport(){
+    window.location.href = "report.html";
+}
+
+/* =====================================================
+   DATABASE RECORDS INTEGRATION
+===================================================== */
+
+let allDbRecords = [];
+
+async function loadDatabaseRecords() {
+    const tbody = document.getElementById("dbRecordsBody");
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#506a7b;">Connecting to EyeGUARDIAN SQLite database...</td></tr>`;
+
+    try {
+        allDbRecords = await EyeGuardAPI.listScreenings(50);
+        renderDbTable(allDbRecords);
+    } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#ffd269;">Backend database not reachable. Please ensure the backend server is running.</td></tr>`;
+    }
+}
+
+function renderDbTable(records) {
+    const tbody = document.getElementById("dbRecordsBody");
+    if (!tbody) return;
+
+    if (!Array.isArray(records) || records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#678193;">No historical screening records found in database. Complete a new screening to record data.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = records.map(r => {
+        const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString() + ' ' + new Date(r.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--';
+        const risk = r.overall_risk || 'pending';
+        let riskBadge = `<span style="background:rgba(125,150,168,0.15); color:#7d96a8; padding:3px 8px; border-radius:10px; font-weight:700;">PENDING</span>`;
+        if (risk === 'low') {
+            riskBadge = `<span style="background:rgba(85,232,168,0.15); color:#55e8a8; padding:3px 8px; border-radius:10px; font-weight:700;">LOW RISK</span>`;
+        } else if (risk === 'attention') {
+            riskBadge = `<span style="background:rgba(255,210,105,0.15); color:#ffd269; padding:3px 8px; border-radius:10px; font-weight:700;">ATTENTION</span>`;
+        }
+
+        const modules = [];
+        if (r.images_count > 0) modules.push(`📸 ${r.images_count} Eyes`);
+        if (r.has_vision_test) modules.push(`👁 Vision`);
+        const modulesStr = modules.length ? modules.join(' • ') : 'Registration Only';
+
+        return `
+            <tr>
+                <td><strong style="color:#27e4f2;">${r.screening_id}</strong></td>
+                <td><strong style="color:#fff;">${r.user_name}</strong></td>
+                <td>${r.age} yrs / ${(r.sex || '').toUpperCase()}</td>
+                <td>${dateStr}</td>
+                <td><span style="color:#7d96a8;">${modulesStr}</span></td>
+                <td>${riskBadge}</td>
+                <td>
+                    <button class="action-btn-sm btn-view" onclick="viewDatabaseRecord('${r.screening_id}')">📂 REPORT</button>
+                    <button class="action-btn-sm btn-del" onclick="deleteDatabaseRecord('${r.screening_id}')">✕</button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function filterDbRecords() {
+    const input = document.getElementById("dbSearchInput");
+    const query = (input ? input.value : "").toLowerCase();
+    const filtered = allDbRecords.filter(r => 
+        (r.user_name && r.user_name.toLowerCase().includes(query)) ||
+        (r.screening_id && r.screening_id.toLowerCase().includes(query))
+    );
+    renderDbTable(filtered);
+}
+
+function viewDatabaseRecord(targetId) {
+    sessionStorage.setItem("screeningID", targetId);
+    window.location.href = "report.html";
+}
+
+async function deleteDatabaseRecord(targetId) {
+    if (!confirm(`Delete screening record ${targetId} from SQLite database?`)) return;
+    const ok = await EyeGuardAPI.deleteScreening(targetId);
+    if (ok) {
+        allDbRecords = allDbRecords.filter(r => r.screening_id !== targetId);
+        renderDbTable(allDbRecords);
+    } else {
+        alert("Failed to delete record.");
+    }
+}
+
+// Auto load records on page load
+loadDatabaseRecords();
+</script>
+
+</body>
+
+</html>

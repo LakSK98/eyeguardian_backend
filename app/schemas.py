@@ -31,7 +31,22 @@ class ScreeningStatusResponse(BaseModel):
     screening_id: str
     status: str
     created_at: Optional[datetime] = None
+    user_name: Optional[str] = None
+    age: Optional[int] = None
+    sex: Optional[str] = None
+    symptoms: List[str] = []
     images: List[ImageQualityStatus] = []
+
+class ScreeningUpdate(BaseModel):
+    user_name: Optional[str] = None
+    age: Optional[int] = None
+    sex: Optional[str] = None
+    symptoms: Optional[List[str]] = None
+    affected_eye: Optional[str] = None
+    symptom_duration: Optional[str] = None
+    symptom_severity: Optional[str] = None
+    symptom_notes: Optional[str] = None
+    vision_aid: Optional[str] = None
 
 class ImageUploadResponse(BaseModel):
     ok: bool
@@ -44,8 +59,8 @@ class ImageUploadResponse(BaseModel):
 
 # Vision Test Schemas
 class VisionTestCreate(BaseModel):
-    color_answers: List[str] = Field(default_factory=list, json_schema_extra={"example": ["12", "8", "29"]})
-    near_answers: List[str] = Field(default_factory=list, json_schema_extra={"example": ["A", "E", "F"]})
+    color_answers: List[Any] = Field(default_factory=list, json_schema_extra={"example": ["12", "8", "29"]})
+    near_answers: List[Any] = Field(default_factory=list, json_schema_extra={"example": ["A", "E", "F"]})
     color_score: float = Field(..., ge=0.0, le=1.0, json_schema_extra={"example": 1.0})
     near_vision_score: float = Field(..., ge=0.0, le=1.0, json_schema_extra={"example": 0.9})
 
@@ -53,6 +68,19 @@ class VisionTestResponse(BaseModel):
     status: str
     color_score: float
     near_vision_score: float
+
+class ScreeningListItem(BaseModel):
+    screening_id: str
+    user_name: str
+    age: int
+    sex: str
+    symptoms: List[str] = []
+    status: str
+    created_at: datetime
+    images_count: int = 0
+    has_vision_test: bool = False
+    overall_risk: Optional[str] = None
+    overall_score: Optional[int] = None
 
 # Analysis Schemas
 class SingleAnalysisResult(BaseModel):
@@ -88,3 +116,14 @@ class ResultResponse(BaseModel):
     vision_tests: Optional[VisionTestsSummary] = None
     guidance: List[str]
     disclaimer: str
+    user_name: Optional[str] = None
+    age: Optional[int] = None
+    sex: Optional[str] = None
+    symptoms: List[str] = []
+    created_at: Optional[datetime] = None
+    status: Optional[str] = None
+    affected_eye: Optional[str] = None
+    symptom_duration: Optional[str] = None
+    symptom_severity: Optional[str] = None
+    symptom_notes: Optional[str] = None
+    vision_aid: Optional[str] = None

@@ -15,9 +15,19 @@ class Screening(Base):
     status = Column(String(50), nullable=False, default="waiting_for_images")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
+    # Detailed symptom metadata (stored after symptoms.html step)
+    affected_eye = Column(String(30), nullable=True)       # "Left", "Right", "Both"
+    symptom_duration = Column(String(60), nullable=True)   # free text e.g. "2 weeks"
+    symptom_severity = Column(String(20), nullable=True)   # "Mild", "Moderate", "Severe"
+    symptom_notes = Column(String(500), nullable=True)
+
+    # Patient metadata collected in patient.html
+    vision_aid = Column(String(50), nullable=True)         # "Spectacles", "None", etc.
+
     images = relationship("EyeImage", back_populates="screening", cascade="all, delete-orphan")
     vision_test = relationship("VisionTest", back_populates="screening", uselist=False, cascade="all, delete-orphan")
     analyses = relationship("Analysis", back_populates="screening", cascade="all, delete-orphan")
+
 
 
 class EyeImage(Base):

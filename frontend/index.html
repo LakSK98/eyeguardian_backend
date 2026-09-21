@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EyeGUARDIAN Vision</title>
+<script src="js/api.js"></script>
+
+<style>
+
+/* =========================================================
+   EYEGUARDIAN VISION — COMPETITION FRONTEND
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#020711;
+    --bg2:#05101c;
+    --panel:#081624;
+    --panel2:#0b1c2c;
+    --cyan:#27e4f2;
+    --cyan2:#6ff5f0;
+    --blue:#3d7cff;
+    --purple:#8766ff;
+    --green:#55e8a8;
+    --yellow:#ffd269;
+    --red:#ff6f7f;
+    --white:#f4fcff;
+    --muted:#7d96a8;
+    --border:rgba(124,211,232,.10);
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    font-family:"Segoe UI",Arial,sans-serif;
+    color:var(--white);
+    background:
+        radial-gradient(circle at 73% 8%,rgba(27,201,226,.11),transparent 25%),
+        radial-gradient(circle at 88% 43%,rgba(102,76,255,.08),transparent 28%),
+        radial-gradient(circle at 35% 90%,rgba(17,160,210,.05),transparent 28%),
+        var(--bg);
+}
+
+/* subtle background grid */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.13;
+
+    background-image:
+        linear-gradient(rgba(74,210,230,.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(74,210,230,.06) 1px,transparent 1px);
+
+    background-size:55px 55px;
+
+    mask-image:
+        linear-gradient(to bottom,black,transparent 90%);
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.app{
+    display:grid;
+    grid-template-columns:225px 1fr;
+    min-height:100vh;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+    position:fixed;
+    width:225px;
+    height:100vh;
+    z-index:100;
+
+    padding:25px 15px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(6,16,29,.98),
+            rgba(3,9,17,.98)
+        );
+
+    border-right:1px solid rgba(63,208,229,.09);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:5px 8px 28px;
+}
+
+.brand-logo{
+    width:45px;
+    height:45px;
+    border-radius:14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:24px;
+
+    background:
+        linear-gradient(135deg,#19d4e8,#5577ed);
+
+    box-shadow:
+        0 0 25px rgba(31,209,231,.18);
+}
+
+.brand-title{
+    font-size:16px;
+    font-weight:700;
+}
+
+.brand-title span{
+    color:var(--cyan);
+}
+
+.brand-sub{
+    color:#587487;
+    font-size:8px;
+    letter-spacing:1.8px;
+    margin-top:3px;
+}
+
+.nav-label{
+    color:#476275;
+    font-size:8px;
+    letter-spacing:1.8px;
+    font-weight:700;
+    margin:7px 12px 9px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.nav-item{
+    display:flex;
+    align-items:center;
+    gap:11px;
+
+    padding:11px 13px;
+    border-radius:11px;
+
+    color:#7790a1;
+    font-size:12px;
+
+    cursor:pointer;
+    transition:.2s;
+}
+
+.nav-item:hover{
+    color:white;
+    background:rgba(39,228,242,.05);
+    transform:translateX(2px);
+}
+
+.nav-item.active{
+    color:#dffcff;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(39,228,242,.13),
+            rgba(39,228,242,.02)
+        );
+
+    border:1px solid rgba(39,228,242,.10);
+}
+
+.nav-icon{
+    width:18px;
+    text-align:center;
+    color:var(--cyan);
+}
+
+.device-panel{
+    position:absolute;
+    bottom:20px;
+    left:15px;
+    right:15px;
+
+    padding:13px;
+    border-radius:13px;
+
+    background:rgba(255,255,255,.025);
+    border:1px solid rgba(255,255,255,.05);
+}
+
+.device-panel small{
+    color:#526c7e;
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.device-ready{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    color:var(--green);
+    font-size:10px;
+
+    margin-top:7px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--green);
+
+    box-shadow:
+        0 0 9px rgba(85,232,168,.75);
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+    grid-column:2;
+    padding:25px 31px 45px;
+    width:100%;
+    max-width:1700px;
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.platform-name{
+    font-size:9px;
+    color:#557185;
+    letter-spacing:2px;
+    font-weight:700;
+}
+
+.system-pills{
+    display:flex;
+    gap:8px;
+}
+
+.system-pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:8px 11px;
+
+    border-radius:10px;
+
+    background:rgba(255,255,255,.025);
+    border:1px solid rgba(255,255,255,.055);
+
+    color:#7895a7;
+    font-size:9px;
+}
+
+.system-pill.ready{
+    color:#76e3b3;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    display:grid;
+    grid-template-columns:.9fr 1.1fr;
+    gap:35px;
+    min-height:430px;
+    align-items:center;
+
+    margin-bottom:35px;
+}
+
+
+/* HERO TEXT */
+
+.hero-copy{
+    padding-left:10px;
+}
+
+.hero-label{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    color:#74dbe7;
+    font-size:9px;
+    letter-spacing:1.8px;
+    font-weight:700;
+
+    margin-bottom:16px;
+}
+
+.hero-copy h1{
+    font-size:54px;
+    line-height:.98;
+    letter-spacing:-2.5px;
+    font-weight:650;
+
+    max-width:570px;
+}
+
+.hero-copy h1 span{
+    color:var(--cyan);
+}
+
+.hero-description{
+    margin-top:19px;
+
+    max-width:530px;
+
+    color:#7892a5;
+
+    font-size:13px;
+    line-height:1.75;
+}
+
+.hero-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    margin-top:24px;
+}
+
+.primary-btn{
+    border:none;
+
+    padding:14px 22px;
+    border-radius:11px;
+
+    background:
+        linear-gradient(100deg,#20cbdc,#48d6bd);
+
+    color:#031216;
+
+    font-size:11px;
+    font-weight:750;
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 27px rgba(32,203,220,.17);
+
+    transition:.2s;
+}
+
+.primary-btn:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 11px 32px rgba(32,203,220,.27);
+}
+
+.secondary-btn{
+    padding:13px 18px;
+    border-radius:11px;
+
+    background:transparent;
+
+    border:1px solid rgba(116,210,229,.12);
+
+    color:#89a6b8;
+
+    font-size:10px;
+
+    cursor:pointer;
+}
+
+.tech-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:17px;
+
+    margin-top:27px;
+
+    color:#557286;
+    font-size:8px;
+    letter-spacing:.8px;
+}
+
+.tech-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.tech-dot{
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--cyan);
+}
+
+
+/* =========================================================
+   HERO EYE
+========================================================= */
+
+.eye-console{
+    position:relative;
+    min-height:390px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+
+    border-radius:30px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(28,196,222,.15),
+            rgba(7,22,36,.55) 45%,
+            rgba(3,10,18,.93) 78%
+        );
+
+    border:1px solid rgba(71,206,226,.09);
+
+    box-shadow:
+        inset 0 0 90px rgba(0,0,0,.50),
+        0 30px 70px rgba(0,0,0,.16);
+}
+
+.eye-console::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background-image:
+        linear-gradient(rgba(72,213,231,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(72,213,231,.035) 1px,transparent 1px);
+
+    background-size:38px 38px;
+
+    mask-image:
+        radial-gradient(circle,black,transparent 75%);
+}
+
+.eye-aura{
+    position:absolute;
+
+    width:500px;
+    height:250px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(35,217,235,.18),
+            rgba(38,128,235,.05) 48%,
+            transparent 70%
+        );
+
+    filter:blur(20px);
+}
+
+.eye-ring{
+    position:absolute;
+
+    width:315px;
+    height:315px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(42,223,240,.11);
+
+    box-shadow:
+        0 0 45px rgba(38,212,234,.035);
+}
+
+.eye-ring::before{
+    content:"";
+
+    position:absolute;
+
+    inset:18px;
+
+    border-radius:50%;
+
+    border:
+        1px dashed
+        rgba(42,223,240,.09);
+
+    animation:rotateRing 24s linear infinite;
+}
+
+@keyframes rotateRing{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.main-eye{
+    position:relative;
+    z-index:4;
+
+    width:75%;
+    max-width:500px;
+    max-height:255px;
+
+    object-fit:contain;
+
+    border-radius:30px;
+
+    filter:
+        drop-shadow(0 0 12px rgba(38,220,239,.23))
+        drop-shadow(0 0 35px rgba(37,115,221,.09));
+
+    animation:eyeFloat 6s ease-in-out infinite;
+}
+
+@keyframes eyeFloat{
+    0%,100%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.012);
+    }
+}
+
+.scan-line{
+    position:absolute;
+    z-index:7;
+
+    width:72%;
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(57,230,244,.85),
+            transparent
+        );
+
+    box-shadow:
+        0 0 10px rgba(57,230,244,.7);
+
+    animation:scan 4.5s ease-in-out infinite;
+}
+
+@keyframes scan{
+    0%,100%{
+        transform:translateY(-90px);
+        opacity:.08;
+    }
+
+    50%{
+        transform:translateY(90px);
+        opacity:.7;
+    }
+}
+
+.optical-status{
+    position:absolute;
+    top:18px;
+    left:20px;
+
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    z-index:10;
+
+    color:#708c9e;
+
+    font-size:8px;
+    letter-spacing:1.6px;
+    font-weight:700;
+}
+
+.eye-number{
+    position:absolute;
+    right:20px;
+    top:18px;
+
+    z-index:10;
+
+    color:#49687b;
+    font-size:8px;
+    letter-spacing:1.3px;
+}
+
+.hud-left,
+.hud-right{
+    position:absolute;
+    bottom:19px;
+
+    z-index:10;
+
+    padding:8px 11px;
+
+    border-radius:9px;
+
+    background:rgba(4,14,25,.66);
+
+    border:1px solid rgba(61,207,228,.08);
+}
+
+.hud-left{
+    left:20px;
+}
+
+.hud-right{
+    right:20px;
+}
+
+.hud-left span,
+.hud-right span{
+    display:block;
+
+    color:#4d6b7d;
+
+    font-size:7px;
+    letter-spacing:1px;
+}
+
+.hud-left strong,
+.hud-right strong{
+    display:block;
+
+    margin-top:3px;
+
+    color:#65deb0;
+
+    font-size:9px;
+}
+
+
+/* =========================================================
+   SECTION HEADERS
+========================================================= */
+
+.section-header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.section-kicker{
+    color:var(--cyan);
+    font-size:8px;
+    letter-spacing:2.2px;
+    font-weight:700;
+}
+
+.section-header h2{
+    margin-top:6px;
+    font-size:26px;
+    font-weight:600;
+}
+
+.section-header p{
+    margin:7px auto 0;
+
+    max-width:600px;
+
+    color:#647e90;
+
+    font-size:11px;
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   SCREENING SUITE
+========================================================= */
+
+.screening-suite{
+    padding-top:12px;
+    margin-bottom:40px;
+}
+
+.activity-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:13px;
+}
+
+.activity-card{
+    position:relative;
+    overflow:hidden;
+
+    min-height:220px;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,28,46,.89),
+            rgba(6,16,28,.93)
+        );
+
+    border:1px solid rgba(112,207,226,.075);
+
+    box-shadow:
+        0 14px 35px rgba(0,0,0,.12);
+
+    transition:.25s;
+}
+
+.activity-card::before{
+    content:"";
+
+    position:absolute;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(46,219,238,.28),
+            transparent
+        );
+}
+
+.activity-card:hover{
+    transform:translateY(-4px);
+
+    border-color:
+        rgba(55,218,237,.18);
+
+    box-shadow:
+        0 20px 42px rgba(0,0,0,.20);
+}
+
+.activity-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.activity-icon{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    font-size:19px;
+
+    color:var(--cyan);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(39,228,242,.11),
+            rgba(62,116,255,.055)
+        );
+
+    border:1px solid rgba(39,228,242,.08);
+}
+
+.activity-number{
+    color:#365568;
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+.activity-card h3{
+    margin-top:14px;
+
+    font-size:14px;
+    font-weight:600;
+}
+
+.activity-card ul{
+    list-style:none;
+    margin-top:13px;
+}
+
+.activity-card li{
+    position:relative;
+
+    padding-left:15px;
+
+    margin-bottom:7px;
+
+    color:#718a9b;
+
+    font-size:10px;
+    line-height:1.4;
+}
+
+.activity-card li::before{
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:6px;
+
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:var(--cyan);
+
+    box-shadow:
+        0 0 6px rgba(39,228,242,.40);
+}
+
+.activity-bottom{
+    position:absolute;
+    bottom:17px;
+    left:20px;
+    right:20px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.activity-status{
+    color:#57dca7;
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.activity-arrow{
+    color:#416b7d;
+}
+
+
+/* =========================================================
+   SCREENING JOURNEY
+========================================================= */
+
+.journey-section{
+    margin:43px 0;
+}
+
+.journey{
+    position:relative;
+
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+
+    padding:24px 25px;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10,26,43,.78),
+            rgba(5,15,27,.86)
+        );
+
+    border:1px solid rgba(107,206,226,.075);
+}
+
+.journey::before{
+    content:"";
+
+    position:absolute;
+
+    top:49px;
+    left:10%;
+    right:10%;
+
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(39,228,242,.05),
+            rgba(39,228,242,.35),
+            rgba(39,228,242,.05)
+        );
+}
+
+.journey-step{
+    position:relative;
+    z-index:2;
+
+    text-align:center;
+}
+
+.step-circle{
+    width:50px;
+    height:50px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#c7f8fb;
+
+    font-size:11px;
+    font-weight:700;
+
+    background:#091b2a;
+
+    border:1px solid rgba(47,221,239,.20);
+
+    box-shadow:
+        0 0 18px rgba(39,228,242,.06);
+}
+
+.journey-step h4{
+    margin-top:10px;
+
+    font-size:10px;
+    letter-spacing:.7px;
+}
+
+.journey-step p{
+    margin-top:4px;
+
+    color:#587184;
+
+    font-size:8px;
+}
+
+
+/* =========================================================
+   FINAL CTA
+========================================================= */
+
+.final-panel{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:25px;
+    align-items:center;
+
+    padding:25px 27px;
+
+    border-radius:20px;
+
+    background:
+        radial-gradient(
+            circle at 85% 50%,
+            rgba(39,228,242,.08),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(11,30,48,.92),
+            rgba(6,17,29,.92)
+        );
+
+    border:1px solid rgba(86,212,231,.09);
+}
+
+.final-panel h3{
+    font-size:18px;
+    font-weight:600;
+}
+
+.final-panel p{
+    max-width:700px;
+
+    margin-top:6px;
+
+    color:#678193;
+
+    font-size:10px;
+    line-height:1.6;
+}
+
+.final-button{
+    padding:13px 22px;
+
+    border:none;
+    border-radius:11px;
+
+    cursor:pointer;
+
+    background:
+        linear-gradient(
+            100deg,
+            #1bc9dc,
+            #49d7bd
+        );
+
+    color:#031216;
+
+    font-size:10px;
+    font-weight:750;
+
+    white-space:nowrap;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer{
+    margin-top:23px;
+
+    display:flex;
+    justify-content:space-between;
+
+    color:#3d586a;
+
+    font-size:8px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1150px){
+
+    .hero{
+        grid-template-columns:1fr;
+    }
+
+    .activity-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:780px){
+
+    .app{
+        display:block;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        padding:20px;
+    }
+
+    .hero-copy h1{
+        font-size:42px;
+    }
+
+    .activity-grid{
+        grid-template-columns:1fr;
+    }
+
+    .journey{
+        grid-template-columns:1fr;
+        gap:20px;
+    }
+
+    .journey::before{
+        display:none;
+    }
+
+    .final-panel{
+        grid-template-columns:1fr;
+    }
+}
+.brand-logo{
+    width:48px;
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(59,230,244,.15),
+            rgba(12,31,48,.95) 55%,
+            rgba(5,16,28,.98)
+        );
+
+    border:1px solid rgba(68,221,238,.22);
+
+    box-shadow:
+        inset 0 0 18px rgba(39,228,242,.06),
+        0 7px 24px rgba(0,0,0,.22);
+}
+
+.guardian-logo{
+    width:34px;
+    height:34px;
+    overflow:visible;
+}
+
+.logo-eye{
+    fill:rgba(39,228,242,.035);
+    stroke:#54ddea;
+    stroke-width:2;
+}
+
+.logo-iris{
+    fill:none;
+    stroke:#69eff1;
+    stroke-width:2;
+}
+
+.logo-core{
+    fill:#d9ffff;
+
+    filter:
+        drop-shadow(0 0 4px rgba(61,232,244,.8));
+}
+
+.logo-node{
+    fill:#55e8a8;
+}
+
+.logo-connect{
+    fill:none;
+    stroke:#398fa4;
+    stroke-width:1.3;
+    stroke-linecap:round;
+}
+.nav-item{
+    position:relative;
+
+    min-height:54px;
+
+    padding:9px 11px;
+
+    gap:11px;
+
+    border:1px solid transparent;
+}
+
+.nav-icon{
+    width:31px;
+    height:31px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:9px;
+
+    background:
+        rgba(39,228,242,.045);
+
+    border:
+        1px solid
+        rgba(39,228,242,.06);
+
+    color:#58dce9;
+
+    font-size:12px;
+    font-weight:600;
+
+    transition:.2s;
+}
+
+.nav-text{
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:2px;
+}
+
+.nav-text strong{
+    color:#93adbc;
+
+    font-size:10px;
+    font-weight:600;
+
+    letter-spacing:.15px;
+}
+
+.nav-text small{
+    color:#425f72;
+
+    font-size:7px;
+
+    letter-spacing:.25px;
+}
+
+.nav-arrow{
+    color:#35586b;
+
+    font-size:16px;
+
+    opacity:.65;
+
+    transition:.2s;
+}
+
+
+/* HOVER */
+
+.nav-item:hover{
+    background:
+        linear-gradient(
+            90deg,
+            rgba(39,228,242,.075),
+            rgba(39,228,242,.015)
+        );
+
+    border-color:
+        rgba(39,228,242,.08);
+}
+
+.nav-item:hover .nav-icon{
+
+    color:#d9ffff;
+
+    background:
+        rgba(39,228,242,.10);
+
+    border-color:
+        rgba(39,228,242,.14);
+
+    box-shadow:
+        0 0 15px
+        rgba(39,228,242,.07);
+}
+
+.nav-item:hover .nav-text strong{
+    color:#e3faff;
+}
+
+.nav-item:hover .nav-arrow{
+    color:var(--cyan);
+
+    transform:
+        translateX(2px);
+}
+
+
+/* ACTIVE */
+
+.nav-item.active{
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(34,208,228,.14),
+            rgba(34,208,228,.025)
+        );
+
+    border:
+        1px solid
+        rgba(61,218,237,.12);
+
+    box-shadow:
+        inset 3px 0 0
+        rgba(48,222,239,.75);
+}
+
+.nav-item.active .nav-icon{
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(39,228,242,.15),
+            rgba(58,105,219,.07)
+        );
+
+    border-color:
+        rgba(39,228,242,.15);
+
+    color:#d8ffff;
+}
+
+.nav-item.active .nav-text strong{
+    color:#e7fcff;
+}
+
+.nav-item.active .nav-text small{
+    color:#5d91a3;
+}
+
+.nav-item.active .nav-arrow{
+    color:#5bdce8;
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+<!-- ======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+
+    <svg class="guardian-logo" viewBox="0 0 64 64">
+
+        <!-- Outer vision lens -->
+        <path
+            d="M7 32
+               C14 19 22 14 32 14
+               C42 14 50 19 57 32
+               C50 45 42 50 32 50
+               C22 50 14 45 7 32Z"
+            class="logo-eye"
+        />
+
+        <!-- Intelligent iris -->
+        <circle cx="32" cy="32" r="10" class="logo-iris"/>
+
+        <!-- Core -->
+        <circle cx="32" cy="32" r="4" class="logo-core"/>
+
+        <!-- AI / scanner nodes -->
+        <circle cx="32" cy="14" r="1.8" class="logo-node"/>
+        <circle cx="50" cy="32" r="1.8" class="logo-node"/>
+        <circle cx="32" cy="50" r="1.8" class="logo-node"/>
+        <circle cx="14" cy="32" r="1.8" class="logo-node"/>
+
+        <!-- Medical / technology connection -->
+        <path
+            d="M32 14 V20
+               M50 32 H44
+               M32 50 V44
+               M14 32 H20"
+            class="logo-connect"
+        />
+
+    </svg>
+
+</div>
+
+        <div>
+
+            <div class="brand-title">
+                Eye<span>GUARDIAN</span>
+            </div>
+
+            <div class="brand-sub">
+                VISION
+            </div>
+
+        </div>
+
+    </div>
+
+
+<div class="nav-label">
+    EYEGUARDIAN CONTROL CENTER
+</div>
+
+   <nav class="nav">
+
+    <div class="nav-item active" onclick="goCommandCenter()">
+
+        <span class="nav-icon">
+            ◫
+        </span>
+
+        <div class="nav-text">
+            <strong>Command Center</strong>
+            <small>System overview</small>
+        </div>
+
+        <span class="nav-arrow">›</span>
+
+    </div>
+
+
+    <div class="nav-item" onclick="startScreening()">
+
+        <span class="nav-icon">
+            ✦
+        </span>
+
+        <div class="nav-text">
+            <strong>New Screening</strong>
+            <small>Begin assessment</small>
+        </div>
+
+        <span class="nav-arrow">›</span>
+
+    </div>
+
+
+  <div class="nav-item" onclick="openScreeningModule('capture.html')">
+
+        <span class="nav-icon">
+            ◉
+        </span>
+
+        <div class="nav-text">
+            <strong>Optical Capture</strong>
+            <small>Dual-eye imaging</small>
+        </div>
+
+        <span class="nav-arrow">›</span>
+
+    </div>
+
+
+  <div class="nav-item" onclick="openScreeningModule('colour-vision.html')"> 
+
+        <span class="nav-icon">
+            ◈
+        </span>
+
+        <div class="nav-text">
+            <strong>Colour Vision</strong>
+            <small>Colour screening</small>
+        </div>
+
+        <span class="nav-arrow">›</span>
+
+    </div>
+
+
+   <div class="nav-item" onclick="openScreeningModule('near-vision.html')"> 
+
+        <span class="nav-icon">
+            Aa
+        </span>
+
+        <div class="nav-text">
+            <strong>Near Vision</strong>
+            <small>Reading assessment</small>
+        </div>
+
+        <span class="nav-arrow">›</span>
+
+    </div>
+
+<div
+    class="nav-item"
+    onclick="openScreeningModule('analysis.html')"
+>
+
+    <span class="nav-icon">
+        ⬡
+    </span>
+
+    <div class="nav-text">
+
+        <strong>Screening Analysis</strong>
+
+        <small>
+            Assessment overview
+        </small>
+
+    </div>
+
+    <span class="nav-arrow">›</span>
+
+</div>
+    
+
+  <div class="nav-item" onclick="openScreeningModule('report.html')">
+
+        <span class="nav-icon">
+            ▤
+        </span>
+
+        <div class="nav-text">
+            <strong>Smart Reports</strong>
+            <small>Reports & guidance</small>
+        </div>
+
+        <span class="nav-arrow">›</span>
+
+    </div>
+
+
+ <div
+    class="nav-item"
+    onclick="openPatientRecords()"
+>
+
+    <span class="nav-icon">
+        ◷
+    </span>
+
+    <div class="nav-text">
+
+        <strong>Patient Records</strong>
+
+        <small>
+            Current screening record
+        </small>
+
+    </div>
+
+    <span class="nav-arrow">›</span>
+
+</div>  
+</nav>
+    <div class="device-panel">
+
+        <small>
+            EYEGUARDIAN DEVICE
+        </small>
+
+        <div class="device-ready">
+
+            <span class="dot"></span>
+
+            Ready to Connect
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+
+<!-- TOP BAR -->
+
+<header class="topbar">
+
+    <div class="platform-name">
+        EYEGUARDIAN VISION / SCREENING PLATFORM
+    </div>
+
+
+    <div class="system-pills">
+
+        <div class="system-pill ready">
+            <span class="dot"></span>
+            SYSTEM READY
+        </div>
+
+        <div class="system-pill">
+            ◉ DUAL EYE SYSTEM
+        </div>
+
+    <div class="system-pill">
+    ANALYSIS ENGINE
+</div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     HERO
+======================================================= -->
+
+<section class="hero">
+
+
+<!-- LEFT -->
+
+<div class="hero-copy">
+
+
+    <div class="hero-label">
+
+        <span class="dot"></span>
+
+        INTELLIGENT EYE SCREENING
+
+    </div>
+
+
+    <h1>
+
+        See Earlier.<br>
+
+        <span>Protect Vision.</span>
+
+    </h1>
+
+
+    <p class="hero-description">
+
+        EyeGUARDIAN Vision combines controlled dual-eye imaging,
+        computer vision, guided vision tests and structured
+        screening analysis to provide an accessible first step
+        towards identifying possible eye-health concerns.
+
+    </p>
+
+
+    <div class="hero-actions">
+
+        <button
+            class="primary-btn"
+            onclick="startScreening()"
+        >
+            START COMPLETE SCREENING &nbsp; →
+        </button>
+
+
+        <button
+            class="secondary-btn"
+            onclick="scrollToSuite()"
+        >
+            EXPLORE SCREENING SUITE
+        </button>
+
+    </div>
+
+
+    <div class="tech-row">
+
+        <div class="tech-item">
+            <span class="tech-dot"></span>
+            DUAL EYE IMAGING
+        </div>
+
+        <div class="tech-item">
+            <span class="tech-dot"></span>
+            COMPUTER VISION
+        </div>
+
+        <div class="tech-item">
+            <span class="tech-dot"></span>
+         SCREENING ANALYSIS  
+        </div>
+
+        <div class="tech-item">
+            <span class="tech-dot"></span>
+            SMART REPORTING
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- EYE -->
+
+<div class="eye-console">
+
+
+    <div class="eye-aura"></div>
+
+    <div class="eye-ring"></div>
+
+
+    <div class="optical-status">
+
+        <span class="dot"></span>
+
+        OPTICAL SYSTEM READY
+
+    </div>
+
+
+    <div class="eye-number">
+
+        DUAL OPTICAL ANALYSIS / 01
+
+    </div>
+
+
+    <!-- YOUR EXISTING EYE IMAGE -->
+
+    <img
+        src="images/eye.png"
+        alt="EyeGUARDIAN Vision"
+        class="main-eye"
+    >
+
+
+    <div class="scan-line"></div>
+
+
+    <div class="hud-left">
+
+        <span>LEFT EYE</span>
+
+        <strong>READY</strong>
+
+    </div>
+
+
+    <div class="hud-right">
+
+        <span>RIGHT EYE</span>
+
+        <strong>READY</strong>
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- ======================================================
+     COMPLETE SCREENING SUITE
+======================================================= -->
+
+<section
+    class="screening-suite"
+    id="screeningSuite"
+>
+
+
+<div class="section-header">
+
+    <div class="section-kicker">
+        COMPLETE SCREENING SUITE
+    </div>
+
+    <h2>
+        One Platform. Multiple Eye Assessments.
+    </h2>
+
+    <p>
+
+        Each screening module contributes information
+        towards a clear preliminary screening summary
+        and appropriate referral guidance.
+
+    </p>
+
+</div>
+
+
+
+<div class="activity-grid">
+
+
+<!-- 01 -->
+
+<div class="activity-card">
+
+    <div class="activity-top">
+
+        <div class="activity-icon">
+            👁
+        </div>
+
+        <div class="activity-number">
+            MODULE 01
+        </div>
+
+    </div>
+
+
+    <h3>
+        Eye Image Analysis
+    </h3>
+
+
+    <ul>
+
+        <li>Left and right eye capture</li>
+
+        <li>Automatic image-quality check</li>
+
+        <li>Blur and exposure assessment</li>
+
+        <li>Pupil and iris localisation</li>
+
+        <li>Visible-eye feature analysis</li>
+
+    </ul>
+
+
+    <div class="activity-bottom">
+
+        <span class="activity-status">
+            ● READY
+        </span>
+
+        <span class="activity-arrow">
+            →
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- 02 -->
+
+<div class="activity-card">
+
+    <div class="activity-top">
+
+        <div class="activity-icon">
+            ◈
+        </div>
+
+        <div class="activity-number">
+            MODULE 02
+        </div>
+
+    </div>
+
+
+    <h3>
+        Colour Vision Screening
+    </h3>
+
+
+    <ul>
+
+        <li>Guided colour screening plates</li>
+
+        <li>Step-by-step instructions</li>
+
+        <li>Typed response entry</li>
+
+        <li>Optional spoken responses</li>
+
+        <li>Preliminary screening result</li>
+
+    </ul>
+
+
+    <div class="activity-bottom">
+
+        <span class="activity-status">
+            ● READY
+        </span>
+
+        <span class="activity-arrow">
+            →
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- 03 -->
+
+<div class="activity-card">
+
+    <div class="activity-top">
+
+        <div class="activity-icon">
+            A
+        </div>
+
+        <div class="activity-number">
+            MODULE 03
+        </div>
+
+    </div>
+
+
+    <h3>
+        Near Vision Assessment
+    </h3>
+
+
+    <ul>
+
+        <li>Controlled reading assessment</li>
+
+        <li>Defined viewing instructions</li>
+
+        <li>Progressive text-size testing</li>
+
+        <li>Response recording</li>
+
+        <li>Referral guidance when required</li>
+
+    </ul>
+
+
+    <div class="activity-bottom">
+
+        <span class="activity-status">
+            ● READY
+        </span>
+
+        <span class="activity-arrow">
+            →
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- 04 -->
+
+<div class="activity-card">
+
+    <div class="activity-top">
+
+        <div class="activity-icon">
+            ✦
+        </div>
+
+        <div class="activity-number">
+            MODULE 04
+        </div>
+
+    </div>
+
+
+    <h3>
+        Symptom Assessment
+    </h3>
+
+
+    <ul>
+
+        <li>Blurred vision</li>
+
+        <li>Headache and eye strain</li>
+
+        <li>Difficulty focusing</li>
+
+        <li>Previous eye history</li>
+
+        <li>Typed or spoken responses</li>
+
+    </ul>
+
+
+    <div class="activity-bottom">
+
+        <span class="activity-status">
+            ● READY
+        </span>
+
+        <span class="activity-arrow">
+            →
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- 05 -->
+
+<div class="activity-card">
+
+    <div class="activity-top">
+
+        <div class="activity-icon">
+            ◎
+        </div>
+
+        <div class="activity-number">
+            MODULE 05
+        </div>
+
+    </div>
+
+<h3>
+    Screening Analysis
+</h3>
+
+
+<ul>
+
+    <li>
+        Combine screening information
+    </li>
+
+    <li>
+        Review symptom findings
+    </li>
+
+    <li>
+        Review colour-vision responses
+    </li>
+
+    <li>
+        Review near-vision performance
+    </li>
+
+    <li>
+        Create preliminary screening summary
+    </li>
+
+</ul>
+
+
+
+
+    <div class="activity-bottom">
+
+<span class="activity-status">
+    ● READY
+</span>
+        <span class="activity-arrow">
+            →
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- 06 -->
+
+<div class="activity-card">
+
+    <div class="activity-top">
+
+        <div class="activity-icon">
+            ▤
+        </div>
+
+        <div class="activity-number">
+            MODULE 06
+        </div>
+
+    </div>
+
+
+    <h3>
+        Smart Screening Report
+    </h3>
+
+
+    <ul>
+
+        <li>Left and right eye summary</li>
+
+        <li>Vision screening results</li>
+
+        <li>Visible screening observations</li>
+
+        <li>Eye-care precautions and guidance</li>
+
+        <li>Professional referral recommendation</li>
+
+    </ul>
+
+
+    <div class="activity-bottom">
+
+        <span class="activity-status">
+            ● READY
+        </span>
+
+        <span class="activity-arrow">
+            →
+        </span>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+<!-- ======================================================
+     JOURNEY
+======================================================= -->
+
+<section class="journey-section">
+
+
+<div class="section-header">
+
+    <div class="section-kicker">
+        SCREENING WORKFLOW
+    </div>
+
+    <h2>
+        From Registration to Guidance
+    </h2>
+
+</div>
+
+
+<div class="journey">
+
+
+    <div class="journey-step">
+
+        <div class="step-circle">
+            01
+        </div>
+
+        <h4>
+            REGISTER
+        </h4>
+
+        <p>
+            Screening ID & symptoms
+        </p>
+
+    </div>
+
+
+    <div class="journey-step">
+
+        <div class="step-circle">
+            02
+        </div>
+
+        <h4>
+            CAPTURE
+        </h4>
+
+        <p>
+            Left & right eye images
+        </p>
+
+    </div>
+
+
+    <div class="journey-step">
+
+        <div class="step-circle">
+            03
+        </div>
+
+        <h4>
+            TEST
+        </h4>
+
+        <p>
+            Vision screening modules
+        </p>
+
+    </div>
+
+
+    <div class="journey-step">
+
+        <div class="step-circle">
+            04
+        </div>
+
+        <h4>
+            ANALYSE
+        </h4>
+
+        <p>
+            Computer-assisted assessment
+        </p>
+
+    </div>
+
+
+    <div class="journey-step">
+
+        <div class="step-circle">
+            05
+        </div>
+
+        <h4>
+            REPORT
+        </h4>
+
+        <p>
+            Results & referral guidance
+        </p>
+
+    </div>
+
+
+</div>
+
+</section>
+
+
+
+<!-- ======================================================
+     FINAL PANEL
+======================================================= -->
+
+<section class="final-panel">
+
+
+<div>
+
+    <h3>
+        Ready to begin a new eye screening?
+    </h3>
+
+    <p>
+
+        Start a guided EyeGUARDIAN Vision screening session.
+        The system will take the user through registration,
+        eye-image capture, vision tests, analysis and the
+        preliminary screening report.
+
+    </p>
+
+</div>
+
+
+<button
+    class="final-button"
+    onclick="startScreening()"
+>
+
+    BEGIN SCREENING &nbsp; →
+
+</button>
+
+
+</section>
+
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <span>
+        EyeGUARDIAN Vision • Smart EyeCare Screening
+    </span>
+
+    <span>
+        Preliminary screening only • Not a medical diagnosis
+    </span>
+
+</footer>
+
+
+</main>
+
+</div>
+
+
+
+<!-- ======================================================
+     JAVASCRIPT
+======================================================= -->
+
+<script>
+
+function startScreening(){
+
+    /* Clear previous screening session */
+
+    sessionStorage.removeItem("screeningID");
+    sessionStorage.removeItem("eyeGuardianPatient");
+    sessionStorage.removeItem("eyeGuardianSymptoms");
+    sessionStorage.removeItem("eyeGuardianCapture");
+    sessionStorage.removeItem("eyeGuardianColourVision");
+    sessionStorage.removeItem("eyeGuardianColourPlateSet");
+    sessionStorage.removeItem("eyeGuardianNearVision");
+
+
+    /* Start a completely new screening */
+
+    window.location.href = "patient.html";
+
+}
+
+function scrollToSuite(){
+
+    document
+        .getElementById("screeningSuite")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+
+}
+
+function goCommandCenter(){
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+function openScreeningModule(page){
+
+    const patient =
+        sessionStorage.getItem(
+            "eyeGuardianPatient"
+        );
+
+    if(!patient){
+
+        alert(
+            "Please start a new screening and complete patient registration first."
+        );
+
+        window.location.href =
+            "patient.html";
+
+        return;
+    }
+
+    window.location.href =
+        page;
+}
+
+
+function openPatientRecords(){
+    window.location.href = "patient-records.html";
+}
+
+// On page load, fetch database statistics if backend is online
+document.addEventListener("DOMContentLoaded", async function() {
+    try {
+        const screenings = await EyeGuardAPI.listScreenings(5);
+        const countBadge = document.getElementById("dbRecordsCount");
+        if (countBadge && Array.isArray(screenings)) {
+            countBadge.textContent = `${screenings.length} Recorded`;
+        }
+    } catch (e) {
+        // Silent fallback
+    }
+});
+</script>
+
+
+</body>
+</html>
